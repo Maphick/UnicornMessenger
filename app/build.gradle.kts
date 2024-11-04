@@ -6,7 +6,7 @@ plugins {
 
 android {
     namespace = "com.mariiadeveloper.unicornmessenger"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.mariiadeveloper.unicornmessenger"
