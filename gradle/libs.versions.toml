@@ -7,7 +7,16 @@ junitVersion = "1.2.1"
 espressoCore = "3.6.1"
 lifecycleRuntimeKtx = "2.8.7"
 activityCompose = "1.9.3"
-composeBom = "2024.04.01"
+composeBom = "2024.06.00"
+room = "2.6.1"
+hilt = "2.51.1"
+retrofit = "2.11.0"
+okhttp = "4.12.0"
+glide = "4.16.0"
+ksp = "2.0.0-1.0.21"
+kotlinCompose = "2.0.0"
+kotlinSerialization = "1.6.3"
+navigation = "2.8.0-beta04"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -24,9 +33,31 @@ androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-toolin
 androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
+#HILT
+hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
+hilt-android-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hilt" }
+#ROOM
+room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
+room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
+androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
+#GLIDE
+glide = { group = "com.github.bumptech.glide", name = "glide", version.ref = "glide"}
+#RETROFIT
+retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit"}
+retrofit-converterJson = { group = "com.squareup.retrofit2", name = "converter-gson", version.ref = "retrofit"}
+
+okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp"}
+#SERIALIZATION
+kotlinx-serialization = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinSerialization" }
+#NAVIGATION
+androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigation" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
-kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
-
+#HILT
+hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
+#KSP для room
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+#COMPOSE
+compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlinCompose" }
