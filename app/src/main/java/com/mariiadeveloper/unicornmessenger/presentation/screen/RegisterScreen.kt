@@ -8,9 +8,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.AccountBox
 import androidx.compose.material.icons.outlined.Email
+import androidx.compose.material.icons.outlined.Face
 import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material.icons.outlined.Person
+import androidx.compose.material.icons.outlined.Phone
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -41,7 +44,6 @@ import com.mariiadeveloper.unicornmessenger.presentation.ui.theme.UnicornMesseng
 @Composable
 fun RegisterScreen(
     // чтобы не передавать нав хост контроллер, тк могут быть утечки памяти
-
     onNavigateTo: (Screen) -> Unit = {}
 )
 {
@@ -75,9 +77,36 @@ fun RegisterView(
             color = MaterialTheme.colorScheme.onBackground
         )
         OutlinedTextField(
-            value = state.username,
+            modifier = Modifier
+                .padding(
+                    top = 180.dp
+                ),
+            value = state.phone,
+            // onValueChange = onEvent(LoginScreenEvent.EmailUpdated()),
+            // lambda - блок
             onValueChange = {
-                onEvent(RegisterScreenEvent.UsernameUpdated(it))
+                onEvent(RegisterScreenEvent.PhoneUpdate(it))
+            },
+            leadingIcon = {
+                Icon(
+                    painter = rememberVectorPainter(
+                        image = Icons.Outlined.Phone
+                    ),
+                    contentDescription = null
+                )
+            },
+            // по умолчанию
+            placeholder = {
+                Text(
+                    text = stringResource(R.string.enter_phone),
+                    fontFamily = FontFamily(Font(DeviceFontFamilyName("sans-serif"))),
+                )
+            }
+        )
+        OutlinedTextField(
+            value = state.name,
+            onValueChange = {
+                onEvent(RegisterScreenEvent.NameUpdate(it))
             },
             leadingIcon = {
                 Icon(
@@ -93,56 +122,31 @@ fun RegisterView(
                 ),
             placeholder = {
                 Text(
+                    text = stringResource(R.string.enter_name),
+                    fontFamily = FontFamily(Font(DeviceFontFamilyName("sans-serif"))),
+                )
+            }
+        )
+        OutlinedTextField(
+            value = state.username,
+            onValueChange = {
+                onEvent(RegisterScreenEvent.UsernameUpdated(it))
+            },
+            leadingIcon = {
+                Icon(
+                    painter = rememberVectorPainter(
+                        image = Icons.Outlined.Face
+                    ),
+                    contentDescription = null
+                )
+            },
+            modifier = Modifier
+                .padding(
+                    top = 10.dp
+                ),
+            placeholder = {
+                Text(
                     text = stringResource(R.string.enter_username),
-                    fontFamily = FontFamily(Font(DeviceFontFamilyName("sans-serif"))),
-                )
-            }
-        )
-        OutlinedTextField(
-            value = state.email,
-            onValueChange = {
-                onEvent(RegisterScreenEvent.EmailUpdate(it))
-            },
-            leadingIcon = {
-                Icon(
-                    painter = rememberVectorPainter(
-                        image = Icons.Outlined.Email
-                    ),
-                    contentDescription = null
-                )
-            },
-            modifier = Modifier
-                .padding(
-                    top = 10.dp
-                ),
-            placeholder = {
-                Text(
-                    text = stringResource(R.string.enter_email),
-                    fontFamily = FontFamily(Font(DeviceFontFamilyName("sans-serif"))),
-                )
-            }
-        )
-        OutlinedTextField(
-            value = state.password,
-            onValueChange = {
-                onEvent(RegisterScreenEvent.PasswordUpdate(it))
-            },
-            leadingIcon = {
-                Icon(
-                    painter = rememberVectorPainter(
-                        image = Icons.Outlined.Lock
-                    ),
-                    contentDescription = null
-                )
-            },
-            modifier = Modifier
-                .padding(
-                    top = 10.dp
-                ),
-            visualTransformation = PasswordVisualTransformation(),
-            placeholder = {
-                Text(
-                    text = stringResource(R.string.enter_password),
                     fontFamily = FontFamily(Font(DeviceFontFamilyName("sans-serif"))),
                 )
             }

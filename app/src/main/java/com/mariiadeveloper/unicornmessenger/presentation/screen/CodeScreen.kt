@@ -12,9 +12,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material.icons.outlined.Email
 import androidx.compose.material.icons.outlined.Lock
-import androidx.compose.material.icons.outlined.Phone
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -44,20 +44,23 @@ import androidx.room.util.TableInfo
 
 import com.mariiadeveloper.unicornmessenger.R
 import com.mariiadeveloper.unicornmessenger.presentation.navigation.Screen
+import com.mariiadeveloper.unicornmessenger.presentation.screen.state.CodeScreenEvent
+import com.mariiadeveloper.unicornmessenger.presentation.screen.state.CodeScreenState
 import com.mariiadeveloper.unicornmessenger.presentation.screen.state.LoginScreenEvent
 import com.mariiadeveloper.unicornmessenger.presentation.screen.state.LoginScreenState
+import com.mariiadeveloper.unicornmessenger.presentation.screen.viewmodel.CodeScreenViewModel
 import com.mariiadeveloper.unicornmessenger.presentation.screen.viewmodel.LoginScreenViewModel
 import com.mariiadeveloper.unicornmessenger.presentation.ui.component.StyledButton
 import com.mariiadeveloper.unicornmessenger.presentation.ui.theme.UnicornMessengerTheme
 
 // контейнер, в котором хранится вью модель и стейт
 @Composable
-fun LoginScreen(
+fun CodeScreen(
     onNavigateTo: (Screen) -> Unit = {}
 )
 {
-    val viewModel = viewModel<LoginScreenViewModel>()
-    LoginView(
+    val viewModel = viewModel<CodeScreenViewModel>()
+    CodeView(
         state = viewModel.state,
         // референс на функцию onEvent
         //  т.е. она автоматически будет вызываться с параметром, который будет туда передаваться
@@ -69,12 +72,12 @@ fun LoginScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoginView(
+fun CodeView(
     // чтобы не передавать нав хост контроллер, тк могут быть утечки памяти
     //viewModel: LoginScreenViewModel = viewModel(),
-    state: LoginScreenState = LoginScreenState(),
+    state: CodeScreenState = CodeScreenState(),
     // lambda-функция для изменения стейта
-    onEvent: (LoginScreenEvent) -> Unit = {},
+    onEvent: (CodeScreenEvent) -> Unit = {},
     onNavigateTo: (Screen) -> Unit = {}
 ) {
     Column(
@@ -108,16 +111,16 @@ fun LoginView(
                 .padding(
                     top = 180.dp
                 ),
-            value = state.phone,
+            value = state.code,
             // onValueChange = onEvent(LoginScreenEvent.EmailUpdated()),
             // lambda - блок
             onValueChange = {
-                onEvent(LoginScreenEvent.PhoneUpdated(it))
+                onEvent(CodeScreenEvent.CodeUpdated(it))
             },
             leadingIcon = {
                 Icon(
                     painter = rememberVectorPainter(
-                        image = Icons.Outlined.Phone
+                        image = Icons.Outlined.CheckCircle
                     ),
                     contentDescription = null
                 )
@@ -125,7 +128,7 @@ fun LoginView(
             // по умолчанию
             placeholder = {
                 Text(
-                    text = stringResource(R.string.enter_phone),
+                    text = stringResource(R.string.enter_code),
                     fontFamily = FontFamily(Font(DeviceFontFamilyName("sans-serif"))),
                 )
             }
@@ -133,7 +136,7 @@ fun LoginView(
         StyledButton(
             modifier = Modifier
                 .padding(
-                    top = 20.dp
+                    top = 30.dp
                 )
                 .width(280.dp)
                 .height(50.dp),
@@ -141,7 +144,7 @@ fun LoginView(
             content =
             {
                 Text(
-                    text = stringResource(R.string.get_code),
+                    text = stringResource(R.string.send_code),
                     fontSize = 19.sp,
                     fontFamily = FontFamily(Font(DeviceFontFamilyName("sans-serif"))),
                     color = MaterialTheme.colorScheme.secondaryContainer
@@ -154,7 +157,7 @@ fun LoginView(
             fontFamily = FontFamily(Font(DeviceFontFamilyName("sans-serif"))),
             modifier = Modifier
                 .padding(
-                    top = 20.dp
+                    top = 0.dp
                 )
                 .clickable {
                     onNavigateTo(Screen.Register)
@@ -166,8 +169,8 @@ fun LoginView(
 
 @Composable
 @Preview(showBackground = true)
-fun LoginScreenPreview() {
-    LoginView()
+fun CodeScreenPreview() {
+    CodeView()
 }
 
 @Preview(showBackground = true)
@@ -175,16 +178,16 @@ fun LoginScreenPreview() {
 private fun  LoginScreenPreviewLight()
 {
     UnicornMessengerTheme(darkTheme = false) {
-        LoginView()
+        CodeView()
     }
 
 }
 
 @Preview(showBackground = false)
 @Composable
-private fun  LoginScreenPreviewwDark()
+private fun  CodeScreenPreviewwDark()
 {
     UnicornMessengerTheme(darkTheme = true)  {
-        LoginView()
+        CodeView()
     }
 }
