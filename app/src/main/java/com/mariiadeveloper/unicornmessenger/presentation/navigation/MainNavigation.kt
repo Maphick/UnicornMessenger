@@ -2,12 +2,14 @@ package com.mariiadeveloper.unicornmessenger.presentation.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.mariiadeveloper.unicornmessenger.presentation.screen.LoginScreen
 import com.mariiadeveloper.unicornmessenger.presentation.screen.MainScreen
 import com.mariiadeveloper.unicornmessenger.presentation.screen.RegisterScreen
+import com.mariiadeveloper.unicornmessenger.presentation.screen.viewmodel.LoginScreenViewModel
 
 
 import kotlinx.serialization.Serializable
@@ -41,9 +43,11 @@ fun MainNav(
     {
         //  описание экранов
         composable<Screen.Login> {
-           LoginScreen {navigateTo ->
-               navHostController.navigate(navigateTo)
-           }
+           LoginScreen (
+               onNavigateTo = {navigateTo ->
+                   navHostController.navigate(navigateTo)
+               }
+           )
         }
         composable<Screen.Register> {
             RegisterScreen{navigateTo ->
