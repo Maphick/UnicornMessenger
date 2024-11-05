@@ -15,9 +15,9 @@ class RegisterScreenViewModel: ViewModel() {
     fun onEvent(event: RegisterScreenEvent)
     {
         when (event) {
+            is RegisterScreenEvent.PhoneUpdate -> state = state.copy(phone = event.newPhone)
+            is RegisterScreenEvent.NameUpdate -> state = state.copy(name = event.newName)
             is RegisterScreenEvent.UsernameUpdated -> state = state.copy(username = event.newUsername)
-            is RegisterScreenEvent.EmailUpdate -> state = state.copy(email = event.newEmail)
-            is RegisterScreenEvent.PasswordUpdate -> state = state.copy(password = event.newPassword)
         }
     }
 }

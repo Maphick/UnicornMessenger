@@ -1,10 +1,12 @@
 <resources>
     <string name="app_name">UnicornMessenger</string>
-    <string name="enter_email">Введите email</string>
-    <string name="enter_password">Введите пароль</string>
-    <string name="login">Войти</string>
+    <string name="send_code">Отправить код</string>
     <string name="no_account_register">Все еще нет аккаунта? Зарегистрируйтесь</string>
-    <string name="enter_username">Введите имя пользователя</string>
+    <string name="enter_name">Имя</string>
+    <string name="enter_username">Ник</string>
     <string name="register">Зарегистрироваться</string>
     <string name="already_have_an_account">Уже есть аккаунт? Войти</string>
+    <string name="enter_phone">Телефон</string>
+    <string name="enter_code">Введите код подтверждения</string>
+    <string name="get_code">Получить код</string>
 </resources>
