@@ -31,6 +31,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.DeviceFontFamilyName
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -40,23 +43,43 @@ import androidx.room.util.TableInfo
 
 import com.mariiadeveloper.unicornmessenger.R
 import com.mariiadeveloper.unicornmessenger.presentation.navigation.Screen
+import com.mariiadeveloper.unicornmessenger.presentation.screen.state.LoginScreenEvent
+import com.mariiadeveloper.unicornmessenger.presentation.screen.state.LoginScreenState
 import com.mariiadeveloper.unicornmessenger.presentation.screen.viewmodel.LoginScreenViewModel
 import com.mariiadeveloper.unicornmessenger.presentation.ui.component.StyledButton
 import com.mariiadeveloper.unicornmessenger.presentation.ui.theme.UnicornMessengerTheme
 
-@OptIn(ExperimentalMaterial3Api::class)
+// контейнер, в котором хранится вью модель и стейт
 @Composable
 fun LoginScreen(
+    onNavigateTo: (Screen) -> Unit = {}
+)
+{
+    val viewModel = viewModel<LoginScreenViewModel>()
+    LoginView(
+        state = viewModel.state,
+        // референс на функцию onEvent
+        //  т.е. она автоматически будет вызываться с параметром, который будет туда передаваться
+        onEvent = viewModel::onEvent,
+        onNavigateTo = onNavigateTo
+    )
+}
+
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun LoginView(
     // чтобы не передавать нав хост контроллер, тк могут быть утечки памяти
-    viewModel: LoginScreenViewModel = viewModel(),
+    //viewModel: LoginScreenViewModel = viewModel(),
+    state: LoginScreenState = LoginScreenState(),
+    // lambda-функция для изменения стейта
+    onEvent: (LoginScreenEvent) -> Unit = {},
     onNavigateTo: (Screen) -> Unit = {}
 ) {
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(
-               // start = 50.dp,
-               // end = 50.dp
             )
         ,
         horizontalAlignment = Alignment.CenterHorizontally
@@ -67,6 +90,7 @@ fun LoginScreen(
                 .padding(top = 100.dp),
             fontSize = 30.sp,
             text = stringResource(R.string.app_name),
+            fontFamily = FontFamily(Font(DeviceFontFamilyName("sans-serif"))),
             color = MaterialTheme.colorScheme.onBackground
         )
         Image(
@@ -83,8 +107,12 @@ fun LoginScreen(
                 .padding(
                     top = 180.dp
                 ),
-            value = viewModel.email,
-            onValueChange = viewModel::updateEmail,
+            value = state.email,
+            // onValueChange = onEvent(LoginScreenEvent.EmailUpdated()),
+            // lambda - блок
+            onValueChange = {
+                onEvent(LoginScreenEvent.EmailUpdated(it))
+            },
             leadingIcon = {
                 Icon(
                     painter = rememberVectorPainter(
@@ -96,13 +124,16 @@ fun LoginScreen(
             // по умолчанию
             placeholder = {
                 Text(
-                    text = stringResource(R.string.enter_email)
+                    text = stringResource(R.string.enter_email),
+                    fontFamily = FontFamily(Font(DeviceFontFamilyName("sans-serif"))),
                 )
             }
         )
         OutlinedTextField(
-            value = viewModel.password,
-            onValueChange = viewModel::updatePassword,
+            value = state.password,
+            onValueChange = {
+                onEvent(LoginScreenEvent.PasswordUpdated(it))
+            },
             leadingIcon = {
                 Icon(
                     painter = rememberVectorPainter(
@@ -118,14 +149,15 @@ fun LoginScreen(
             visualTransformation = PasswordVisualTransformation(),
             placeholder = {
                 Text(
-                    text = stringResource(R.string.enter_password)
+                    text = stringResource(R.string.enter_password),
+                    fontFamily = FontFamily(Font(DeviceFontFamilyName("sans-serif"))),
                 )
             }
         )
         StyledButton(
             modifier = Modifier
                 .padding(
-                     top = 50.dp
+                    top = 50.dp
                 )
                 .width(280.dp)
                 .height(50.dp),
@@ -135,6 +167,7 @@ fun LoginScreen(
                 Text(
                     text = stringResource(R.string.login),
                     fontSize = 19.sp,
+                    fontFamily = FontFamily(Font(DeviceFontFamilyName("sans-serif"))),
                     color = MaterialTheme.colorScheme.secondaryContainer
                 )
             }
@@ -142,6 +175,7 @@ fun LoginScreen(
         Text(
             text = stringResource(R.string.no_account_register),
             fontSize = 16.sp,
+            fontFamily = FontFamily(Font(DeviceFontFamilyName("sans-serif"))),
             modifier = Modifier
                 .padding(
                     top = 20.dp
@@ -157,7 +191,7 @@ fun LoginScreen(
 @Composable
 @Preview(showBackground = true)
 fun LoginScreenPreview() {
-    LoginScreen()
+    LoginView()
 }
 
 @Preview(showBackground = true)
@@ -165,7 +199,7 @@ fun LoginScreenPreview() {
 private fun  LoginScreenPreviewLight()
 {
     UnicornMessengerTheme(darkTheme = false) {
-        LoginScreen()
+        LoginView()
     }
 
 }
@@ -175,6 +209,6 @@ private fun  LoginScreenPreviewLight()
 private fun  LoginScreenPreviewwDark()
 {
     UnicornMessengerTheme(darkTheme = true)  {
-        LoginScreen()
+        LoginView()
     }
 }
