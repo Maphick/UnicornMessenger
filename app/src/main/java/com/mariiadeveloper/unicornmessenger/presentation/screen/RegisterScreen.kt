@@ -1,5 +1,6 @@
 package com.mariiadeveloper.unicornmessenger.presentation.screen
 
+import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -33,6 +34,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.room.util.TableInfo
 import com.mariiadeveloper.unicornmessenger.R
+import com.mariiadeveloper.unicornmessenger.app.App
 import com.mariiadeveloper.unicornmessenger.presentation.navigation.Screen
 import com.mariiadeveloper.unicornmessenger.presentation.screen.state.LoginScreenEvent
 import com.mariiadeveloper.unicornmessenger.presentation.screen.state.RegisterScreenEvent
@@ -41,25 +43,36 @@ import com.mariiadeveloper.unicornmessenger.presentation.screen.viewmodel.Regist
 import com.mariiadeveloper.unicornmessenger.presentation.ui.component.StyledButton
 import com.mariiadeveloper.unicornmessenger.presentation.ui.theme.UnicornMessengerTheme
 
+val context = App.instance.appContext
+
 @Composable
 fun RegisterScreen(
     // чтобы не передавать нав хост контроллер, тк могут быть утечки памяти
-    onNavigateTo: (Screen) -> Unit = {}
+    onNavigateTo: (Screen) -> Unit = {},
+    // переход на главный экран
+            onNavigateToMainScreen: (Screen) -> Unit = {}
 )
 {
     val viewModel = viewModel<RegisterScreenViewModel>()
     RegisterView(
         state = viewModel.state,
         onEvent = viewModel::onEvent,
-        onNavigateTo = onNavigateTo
+        onNavigateTo = onNavigateTo,
+        onNavigateToMainScreen = onNavigateToMainScreen,
     )
 }
+
+private const val s = "fevfwebvgrebefrbgr"
 
 @Composable
 fun RegisterView(
     state: RegisterScreenState = RegisterScreenState(),
-    onEvent: (RegisterScreenEvent) -> Unit = {},
-    onNavigateTo: (Screen) -> Unit = {}
+    onEvent: (RegisterScreenEvent) -> Int = {
+      0
+    },
+    onNavigateTo: (Screen) -> Unit = {},
+    // переход на главный экран
+    onNavigateToMainScreen: (Screen) -> Unit = {},
 )
 {
     Column(
@@ -70,20 +83,14 @@ fun RegisterView(
     {
         Text(
             modifier = Modifier
-                .padding(top = 200.dp),
+                .padding(top = 100.dp),
             fontSize = 30.sp,
             text = stringResource(R.string.app_name),
             fontFamily = FontFamily(Font(DeviceFontFamilyName("sans-serif"))),
             color = MaterialTheme.colorScheme.onBackground
         )
         OutlinedTextField(
-            modifier = Modifier
-                .padding(
-                    top = 180.dp
-                ),
             value = state.phone,
-            // onValueChange = onEvent(LoginScreenEvent.EmailUpdated()),
-            // lambda - блок
             onValueChange = {
                 onEvent(RegisterScreenEvent.PhoneUpdate(it))
             },
@@ -95,7 +102,10 @@ fun RegisterView(
                     contentDescription = null
                 )
             },
-            // по умолчанию
+            modifier = Modifier
+                .padding(
+                    top = 10.dp
+                ),
             placeholder = {
                 Text(
                     text = stringResource(R.string.enter_phone),
@@ -158,7 +168,16 @@ fun RegisterView(
                 )
                 .width(280.dp)
                 .height(50.dp),
-            onClick = {},
+            onClick = {
+                // зарегистрироваться
+                val isSuccesedRegister= onEvent(RegisterScreenEvent.SendRegisterPressed())
+                // прошла ли регистрация успешно
+                showToast(isSuccesedRegister)
+                // если регистрация прошла успешно - переходим на страницу с чатами
+                if (isSuccesedRegister == 0)
+                    onNavigateToMainScreen(Screen.Main)
+
+            },
             content =
             {
                 Text(
@@ -181,6 +200,42 @@ fun RegisterView(
                     onNavigateTo(Screen.Login)
                 }
         )
+    }
+}
+
+
+
+
+fun showToast(isSuccesedRegister: Int)
+{
+    //  если удачно - переходим на главный экран
+    when (isSuccesedRegister) {
+        // регистрация прошла удачно
+        0 ->
+            Toast.makeText(
+                context,
+                context.getString(R.string.successed_register),
+                Toast.LENGTH_LONG
+            ).show()
+
+        1 ->
+            Toast.makeText(
+                context,
+                context.getString(R.string.user_exist),
+                Toast.LENGTH_LONG
+            )
+        -1 -> Toast.makeText(
+            context,
+            context.getString(R.string.network_problem),
+            Toast.LENGTH_LONG
+        )
+
+        else ->
+            Toast.makeText(
+                context,
+                context.getString(R.string.unknown_error),
+                Toast.LENGTH_LONG
+            )
     }
 }
 

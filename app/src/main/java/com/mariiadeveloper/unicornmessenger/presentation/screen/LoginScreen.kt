@@ -43,16 +43,23 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.room.util.TableInfo
 
 import com.mariiadeveloper.unicornmessenger.R
+import com.mariiadeveloper.unicornmessenger.app.App
+import com.mariiadeveloper.unicornmessenger.domain.Interactor
 import com.mariiadeveloper.unicornmessenger.presentation.navigation.Screen
 import com.mariiadeveloper.unicornmessenger.presentation.screen.state.LoginScreenEvent
 import com.mariiadeveloper.unicornmessenger.presentation.screen.state.LoginScreenState
+import com.mariiadeveloper.unicornmessenger.presentation.screen.state.RegisterScreenEvent
 import com.mariiadeveloper.unicornmessenger.presentation.screen.viewmodel.LoginScreenViewModel
 import com.mariiadeveloper.unicornmessenger.presentation.ui.component.StyledButton
 import com.mariiadeveloper.unicornmessenger.presentation.ui.theme.UnicornMessengerTheme
 
+//Инициализируем интерактор
+//private var interactor: Interactor = App.instance.interactor
+
 // контейнер, в котором хранится вью модель и стейт
 @Composable
 fun LoginScreen(
+    onNavigateToMainScreen : (Screen) -> Unit = {},
     onNavigateTo: (Screen) -> Unit = {}
 )
 {
@@ -62,9 +69,11 @@ fun LoginScreen(
         // референс на функцию onEvent
         //  т.е. она автоматически будет вызываться с параметром, который будет туда передаваться
         onEvent = viewModel::onEvent,
+
         onNavigateTo = onNavigateTo
     )
 }
+
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -74,8 +83,12 @@ fun LoginView(
     //viewModel: LoginScreenViewModel = viewModel(),
     state: LoginScreenState = LoginScreenState(),
     // lambda-функция для изменения стейта
-    onEvent: (LoginScreenEvent) -> Unit = {},
-    onNavigateTo: (Screen) -> Unit = {}
+    onEvent: (LoginScreenEvent) -> Int = {
+        0
+    },
+
+    confirmCodeScreen: (Screen) -> Unit = {},
+            onNavigateTo: (Screen) -> Unit = {}
 ) {
     Column(
         modifier = Modifier
@@ -88,7 +101,7 @@ fun LoginView(
     {
         Text(
             modifier = Modifier
-                .padding(top = 100.dp),
+                .padding(top = 50.dp),
             fontSize = 30.sp,
             text = stringResource(R.string.app_name),
             fontFamily = FontFamily(Font(DeviceFontFamilyName("sans-serif"))),
@@ -106,13 +119,14 @@ fun LoginView(
         OutlinedTextField(
             modifier = Modifier
                 .padding(
-                    top = 180.dp
+                    top = 50.dp
                 ),
             value = state.phone,
             // onValueChange = onEvent(LoginScreenEvent.EmailUpdated()),
             // lambda - блок
             onValueChange = {
                 onEvent(LoginScreenEvent.PhoneUpdated(it))
+                //getCodeByPhone()
             },
             leadingIcon = {
                 Icon(
@@ -137,7 +151,14 @@ fun LoginView(
                 )
                 .width(280.dp)
                 .height(50.dp),
-            onClick = {},
+            onClick = {
+                // зарегистрироваться
+                val isSuccesedSendCode = onEvent(LoginScreenEvent.SendAuthCodePresser())
+                // прошла ли регистрация успешно
+                showToast( isSuccesedSendCode)
+                // переходим на главный экран
+                confirmCodeScreen
+            },
             content =
             {
                 Text(

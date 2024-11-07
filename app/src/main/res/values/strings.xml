@@ -9,4 +9,9 @@
     <string name="enter_phone">Телефон</string>
     <string name="enter_code">Введите код подтверждения</string>
     <string name="get_code">Получить код</string>
+    <string name="successed_register">Вот это да! Удачная регистрация</string>
+    <string name="user_exist">Такой пользователь уже есть. Войдите или зарегистрируйтесь
+    под другим номером телефона</string>
+    <string name="network_problem">Проблемки с подключением</string>
+    <string name="unknown_error">Неизвестная проблема</string>
 </resources>

@@ -70,6 +70,8 @@ dependencies {
     implementation(libs.kotlinx.serialization)
     // NAVIGATION
     implementation(libs.androidx.navigation.compose)
+    // DATASTORE
+    implementation(libs.datastore.preferences)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
