@@ -4,6 +4,8 @@ package com.mariiadeveloper.unicornmessenger.presentation.screen.state
 sealed class LoginScreenEvent {
     // data-класс для изменения email
     data class PhoneUpdated(val newPhone: String): LoginScreenEvent()
+
+  class SendAuthCodePresser(): LoginScreenEvent()
 }
 
 data class LoginScreenState(

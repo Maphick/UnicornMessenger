@@ -44,15 +44,26 @@ fun MainNav(
         //  описание экранов
         composable<Screen.Login> {
            LoginScreen (
+               onNavigateToMainScreen = {
+                       navigateTo ->
+                   navHostController.navigate(navigateTo)
+               },
                onNavigateTo = {navigateTo ->
                    navHostController.navigate(navigateTo)
                }
            )
         }
         composable<Screen.Register> {
-            RegisterScreen{navigateTo ->
-                navHostController.navigate(navigateTo)
-            }
+            RegisterScreen(
+                // переход на главный экран
+                onNavigateToMainScreen = {
+                        navigateTo ->
+                    navHostController.navigate(navigateTo)
+                },
+                onNavigateTo = {navigateTo ->
+                    navHostController.navigate(navigateTo)
+                }
+            )
         }
         composable<Screen.Main> {
             MainScreen {navigateTo ->
