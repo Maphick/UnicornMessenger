@@ -11,9 +11,9 @@ import com.mariiadeveloper.unicornmessenger.app.App
 import com.mariiadeveloper.unicornmessenger.data.dto.response.RegisterResponseDto
 import com.mariiadeveloper.unicornmessenger.data.settings.PreferenceProvider
 import com.mariiadeveloper.unicornmessenger.domain.Interactor
+import com.mariiadeveloper.unicornmessenger.domain.Interactor.STATUS_CODE.DEFAULT
 import com.mariiadeveloper.unicornmessenger.presentation.screen.state.RegisterScreenEvent
 import com.mariiadeveloper.unicornmessenger.presentation.screen.state.RegisterScreenState
-import com.mariiadeveloper.unicornmessenger.presentation.screen.viewmodel.LoginScreenViewModel.RegisterCallback
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -27,26 +27,31 @@ class RegisterScreenViewModel: ViewModel() {
     //Инициализируем интерактор
     private var interactor: Interactor = App.instance.interactor
     private val preferences: PreferenceProvider = App.instance.preferences
-    val isRegisteredSuccessed = MutableLiveData<Int>(registerState.DEFAULT)
-
+    val isRegisteredSuccessed = MutableLiveData<Int>(DEFAULT)
 
     // сбросить состояние регистрации
     fun clearRegisteredState()
     {
-        isRegisteredSuccessed.postValue(registerState.DEFAULT)
+        isRegisteredSuccessed.postValue(DEFAULT)
+    }
+    var state by mutableStateOf(RegisterScreenState())
+        private set
+
+    init {
+        val country_code = getCountryCodeFromPreferences()
+        val phone = getPhoneFromPreferences()
+        state.phone = "+" + country_code + phone
     }
 
 
-    var state by mutableStateOf(RegisterScreenState())
-        private set
 
     fun onEvent(event: RegisterScreenEvent): Int {
         var isSuccesedLogin = 0
         when (event) {
-            is RegisterScreenEvent.PhoneUpdate ->
-            {
-                state = state.copy(phone = event.newPhone)
-            }
+            //is RegisterScreenEvent.PhoneUpdate ->
+           // {
+                //state = state.copy(phone = event.newPhone)
+            //}
             is RegisterScreenEvent.NameUpdate -> {
                 state = state.copy(name = event.newName)
             }
@@ -63,6 +68,7 @@ class RegisterScreenViewModel: ViewModel() {
     }
 
 
+
     fun onRegister()
     {
         viewModelScope.launch {
@@ -74,12 +80,13 @@ class RegisterScreenViewModel: ViewModel() {
         }
     }
 
-    private val coroutineScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
+
     // REGISTER
     // phone - номер телефона, который ввел пользователь
     // name -
     // username -
     private fun register(phone: String, name: String, username: String): Job {
+        val coroutineScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
         return coroutineScope.launch {
             // результат запроса
            interactor.registerFromApi(
@@ -87,27 +94,29 @@ class RegisterScreenViewModel: ViewModel() {
                 name = name,
                 username = username,
                 callback = object : RegisterCallback {
-                    override fun onSuccess(registerResponseDto: RegisterResponseDto?) {
+                    override fun onSuccess(registerResponseDto: RegisterResponseDto, code: Int) {
                         Log.d("REGISTER", "Success")
-                        isRegisteredSuccessed.postValue(0)
+                        isRegisteredSuccessed.postValue(code)
                     }
 
-                    override fun onFailure(s: String) {
+                    override fun onFailure(s: String, code: Int) {
                         Log.d("REGISTER", "Fail")
-                        isRegisteredSuccessed.postValue(-1)
+                        isRegisteredSuccessed.postValue(code)
                     }
                 },
             )
             }
     }
 
-    // состояние регистрации
-    companion object registerState {
-        const val DEFAULT = -10
-        const val SUCCESS = 0
-        const val ERROR = -1
-        const val EXIST_USER = -2
-
+    interface RegisterCallback {
+        fun onSuccess(registerResponseDto: RegisterResponseDto, code: Int)
+        fun onFailure(s: String, code: Int)
     }
+
+    // Метод для получения кода страны
+    fun getCountryCodeFromPreferences() = preferences.getCountryCode()
+
+    // Метод для получения телефона
+    fun getPhoneFromPreferences() = preferences.getPhone()
 
 }

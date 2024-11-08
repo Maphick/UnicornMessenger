@@ -8,7 +8,7 @@ sealed class RegisterScreenEvent{
 }
 
 data class RegisterScreenState(
-    val phone: String = "",
+    var phone: String = "",
     val name: String = "",
     val username: String = ""
 )

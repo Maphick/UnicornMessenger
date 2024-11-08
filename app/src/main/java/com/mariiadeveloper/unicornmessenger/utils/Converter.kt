@@ -3,7 +3,6 @@ package com.mariiadeveloper.unicornmessenger.utils
 
 import com.makashovadev.filmsearcher.domain.IsSuccess
 import com.mariiadeveloper.unicornmessenger.data.dto.response.CheckJwtResponseDto
-import com.mariiadeveloper.unicornmessenger.data.dto.response.IsSuccessResponseDto
 
 
 object Converter {
@@ -22,7 +21,7 @@ object Converter {
         return result
     }
 
-    fun convertApiToIsSuccessDto(isSuccessDto: IsSuccessResponseDto): IsSuccess {
+    /*fun convertApiToIsSuccessDto(isSuccessDto: IsSuccessResponseDto): IsSuccess {
         val result =
             isSuccessDto.let {
                 IsSuccess(
@@ -31,7 +30,7 @@ object Converter {
             }
         return result
     }
-
+*/
 
 
 }

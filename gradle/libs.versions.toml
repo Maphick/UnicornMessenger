@@ -19,6 +19,9 @@ kotlinSerialization = "1.6.3"
 navigation = "2.8.0-beta04"
 datastore_preferences = "1.1.1"
 runtimeLivedata = "1.7.5"
+komposecountrycodepicker = "1.2.6"
+coil = "3.0.1"
+
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -58,6 +61,9 @@ androidx-datastore-core-android = { group = "androidx.datastore", name = "datast
 androidx-datastore-preferences-core-jvm = { group = "androidx.datastore", name = "datastore-preferences-core-jvm", version.ref = "datastore_preferences" }
 datastore-preferences =  { group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastore_preferences" }
 androidx-runtime-livedata = { group = "androidx.compose.runtime", name = "runtime-livedata", version.ref = "runtimeLivedata" }
+#COUNTRY PICKER
+komposecountrycodepicker = { module = "io.github.joelkanyi:komposecountrycodepicker", version.ref = "komposecountrycodepicker" }
+
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

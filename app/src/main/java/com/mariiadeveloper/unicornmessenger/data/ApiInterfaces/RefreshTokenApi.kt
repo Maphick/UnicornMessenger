@@ -1,7 +1,6 @@
 package com.mariiadeveloper.unicornmessenger.data.ApiInterfaces
 
 import com.mariiadeveloper.unicornmessenger.data.dto.request.RefreshTokenRequest
-import com.mariiadeveloper.unicornmessenger.data.dto.response.IsSuccessResponseDto
 import com.mariiadeveloper.unicornmessenger.data.dto.response.RegisterResponseDto
 import retrofit2.Call
 import retrofit2.http.Body

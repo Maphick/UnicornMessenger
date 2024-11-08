@@ -6,6 +6,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.mariiadeveloper.unicornmessenger.presentation.screen.CodeScreen
 import com.mariiadeveloper.unicornmessenger.presentation.screen.LoginScreen
 import com.mariiadeveloper.unicornmessenger.presentation.screen.MainScreen
 import com.mariiadeveloper.unicornmessenger.presentation.screen.RegisterScreen
@@ -22,6 +23,9 @@ import kotlinx.serialization.Serializer
 sealed class Screen{
     @Serializable
     data object Login: Screen()
+
+    @Serializable
+    data object Code: Screen()
 
     @Serializable
     data object Register: Screen()
@@ -44,7 +48,7 @@ fun MainNav(
         //  описание экранов
         composable<Screen.Login> {
            LoginScreen (
-               onNavigateToMainScreen = {
+               onNavigateToCodeScreen = {
                        navigateTo ->
                    navHostController.navigate(navigateTo)
                },
@@ -52,6 +56,13 @@ fun MainNav(
                    navHostController.navigate(navigateTo)
                }
            )
+        }
+        composable<Screen.Code> {
+            CodeScreen (
+                onNavigateTo = {navigateTo ->
+                    navHostController.navigate(navigateTo)
+                }
+            )
         }
         composable<Screen.Register> {
             RegisterScreen(
