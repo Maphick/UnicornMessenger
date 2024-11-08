@@ -35,7 +35,6 @@ class RegisterScreenViewModel: ViewModel() {
         isRegisteredSuccessed.postValue(registerState.DEFAULT)
     }
 
-   // var isRegisteredSuccessed: LiveData&lt;Int&gt; = MutableLiveData&lt;Int&gt;(-1)
 
     var state by mutableStateOf(RegisterScreenState())
         private set

@@ -65,6 +65,7 @@ fun RegisterScreen(
         // сбросить состояние регистрации
         viewModel.clearRegisteredState()
     }
+
     RegisterView(
         state = viewModel.state,
         onEvent = viewModel::onEvent,
