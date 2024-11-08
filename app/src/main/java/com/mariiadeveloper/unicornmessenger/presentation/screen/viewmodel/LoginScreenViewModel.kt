@@ -5,16 +5,24 @@ import android.widget.Toast
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.makashovadev.filmsearcher.domain.CheckJwt
+import androidx.lifecycle.viewModelScope
 import com.makashovadev.filmsearcher.domain.IsSuccess
 import com.mariiadeveloper.unicornmessenger.R
 import com.mariiadeveloper.unicornmessenger.app.App
+import com.mariiadeveloper.unicornmessenger.data.dto.response.CheckJwtResponseDto
 import com.mariiadeveloper.unicornmessenger.data.dto.response.RegisterResponseDto
+import com.mariiadeveloper.unicornmessenger.data.dto.response.SendAuthCodeResponseDto
 import com.mariiadeveloper.unicornmessenger.data.settings.PreferenceProvider
 import com.mariiadeveloper.unicornmessenger.domain.Interactor
 import com.mariiadeveloper.unicornmessenger.presentation.screen.state.LoginScreenEvent
 import com.mariiadeveloper.unicornmessenger.presentation.screen.state.LoginScreenState
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 
 class LoginScreenViewModel: ViewModel() {
 
@@ -22,69 +30,86 @@ class LoginScreenViewModel: ViewModel() {
     private var interactor: Interactor = App.instance.interactor
     private val preferences: PreferenceProvider = App.instance.preferences
     private val context = App.instance.appContext
+    val isAuthSuccessed = MutableLiveData<Int>(Interactor.DEFAULT)
+
+    // сбросить состояние регистрации
+    fun clearRegisteredState()
+    {
+        isAuthSuccessed.postValue(Interactor.DEFAULT)
+    }
 
 
     var state by mutableStateOf(LoginScreenState())
         private set
 
     // универсальная функция
-    fun onEvent(event: LoginScreenEvent): Int {
+    fun onEvent(event: LoginScreenEvent) {
         var isSuccesedLogin = 0
         when (event) {
             is LoginScreenEvent.PhoneUpdated -> {
-                this.state = state.copy(phone = event.newPhone)
+                // если цифра, то добавляем
+                if (event.newPhone.toIntOrNull() != null) {
+                    this.state = state.copy(phone = event.newPhone)
+                }
             }
 
-            is LoginScreenEvent.SendAuthCodePresser -> {
-                val refresh_token = preferences.getRefreshToken()
-                val access_token = preferences.getAccessToken()
-
-                // отправка запроса на подтверждение кода
-                isSuccesedLogin = SendAuthCode(
-                    phone = state.phone
-                )
-
-                /*
-                RefreshToken(
-                    refresh_token = refresh_token,
-                    access_token = access_token
-                )
-
-                 */
-            }
+            else -> {}
         }
-        return  isSuccesedLogin
     }
 
 
-    //val vacancesListLiveData = MutableLiveData<List<Vacancy>>()
 
-
-
-    init {
-
-    }
     // WORK WITH SERVER ----------------------------------------------------------------------------
 
     //  SEND AUTH CODE
     // phone - номер телефона, который ввел пользователь
-    fun SendAuthCode(phone: String): Int {
-        var isSuccesedSendAuthCode = 0
-        interactor.sendAuthCode(
-            phone = phone,
-            callback = object : ApiIsSuccessCallback {
-                override fun onSuccess(isSuccess: IsSuccess?) {
-                 Log.d("SEND_AUTH_CODE", "Success")
-                    isSuccesedSendAuthCode = 0
-                }
-                override fun onFailure(s: String) {
-                    Log.d("SEND_AUTH_CODE", "Fail")
-                    isSuccesedSendAuthCode = -1
-                }
-            },
-        )
-        return  isSuccesedSendAuthCode
+    fun onAuth()
+    {
+        if (state.phone.length == 0)
+        {
+
+        }
+        else {
+            viewModelScope.launch {
+                auth(
+                    phone = state.phone,
+                    country_code = state.code
+                )
+            }
+        }
     }
+
+    fun auth(
+        phone: String,
+        country_code: String
+    ): Job {
+        val coroutineScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
+        return coroutineScope.launch {
+            // сохранить телефон и код страны в натсройках
+            savePhoneToPreferences(phone = phone)
+            saveCountryCodeToPreferences(country_code = country_code)
+
+            val result = interactor.sendAuthCode(
+                country_code = country_code,
+                phone = phone,
+                callback = object : SendAuthCodeCallback  {
+                    override fun onSuccess(sendAuthCode: SendAuthCodeResponseDto, code: Int) {
+                        Log.d("SEND_AUTH_CODE", "Success")
+                        isAuthSuccessed.postValue(code)
+                    }
+
+                    override fun onFailure(s: String, code: Int) {
+                        Log.d("SEND_AUTH_CODE", "Fail")
+                        isAuthSuccessed.postValue(code)
+                    }
+                },
+            )
+        }
+    }
+
+
+
+
 
     // REFRESH TOKEN
     // refresh_token -
@@ -94,11 +119,11 @@ class LoginScreenViewModel: ViewModel() {
             refresh_token = refresh_token,
             access_token = access_token,
             callback = object : RefreshTokenCallback {
-                override fun onSuccess(registerResponseDto: RegisterResponseDto?) {
+                override fun onSuccess(registerResponseDto: RegisterResponseDto, code: Int) {
                     Log.d("REFRESH TOKEN", "Success")
                 }
 
-                override fun onFailure(s: String) {
+                override fun onFailure(s: String, code: Int) {
                     Log.d("REFRESH TOKEN", "Fail")
                 }
             },
@@ -110,11 +135,11 @@ class LoginScreenViewModel: ViewModel() {
 
     //  CHECK JWT
     // bearer_token - акссесс токен, который пришел к нам от сервера после регистрации/аутентификации
-    fun CheckJwt(bearer_token: String) {
+   /* fun CheckJwt(bearer_token: String) {
         interactor.checkJwtFromApi(
             bearer_token = bearer_token,
             callback = object : ApiCheckJwtCallback {
-            override fun onSuccess(checkJwt: CheckJwt?) {
+            override fun onSuccess(checkJwt: CheckJwtResponseDto?) {
                 Log.d("SEND_AUTH_CODE", "Success")
             }
             override fun onFailure() {
@@ -123,35 +148,47 @@ class LoginScreenViewModel: ViewModel() {
         },
         )
     }
-
+*/
     // CALLBACKS -----------------------------------------------------------------------------------
     // интерфейсы, которые будут отвечать за коллбэки
 
 
     interface RefreshTokenCallback {
-        fun onSuccess(refreshTokenResponseDto: RegisterResponseDto?)
-        fun onFailure(s: String)
+        fun onSuccess(refreshTokenResponseDto: RegisterResponseDto, code: Int)
+        fun onFailure(s: String, code: Int)
     }
 
-    interface RegisterCallback {
-        fun onSuccess(registerResponseDto: RegisterResponseDto?)
-        fun onFailure(s: String)
+
+
+    interface SendAuthCodeCallback {
+        fun onSuccess(sendAuthCode: SendAuthCodeResponseDto, code: Int)
+        fun onFailure(s: String, code: Int)
     }
 
-    interface ApiIsSuccessCallback {
-        fun onSuccess(isSuccess: IsSuccess?)
-        fun onFailure(s: String)
-    }
 
     // интерфейс, который будет отвечать за коллбэк
     interface ApiCheckJwtCallback {
-        fun onSuccess(checkJwt: CheckJwt?)
-        fun onFailure()
+        fun onSuccess(checkJwt: CheckJwtResponseDto, code: Int)
+        fun onFailure(code: Int)
     }
 
 
     // ACCESS TOKEN + REFRESH TOKEN ----------------------------------------------------------------
     // методы для хранения токенов
+
+
+    // Сохранить код страны
+    fun saveCountryCodeToPreferences(country_code: String) {
+        preferences.saveCountryCode(country_code)
+    }
+
+
+
+    // Сохранить телефон
+    fun savePhoneToPreferences(phone: String) {
+        preferences.savePhone(phone)
+    }
+
 
     // Сохранить аксесс токен
     fun saveAccessTokenToPreferences(category: String) {
@@ -159,7 +196,7 @@ class LoginScreenViewModel: ViewModel() {
     }
 
     // Метод для получения аксесс токена
-    fun getAccessTokenTFromPreferences() = preferences.getAccessToken()
+    fun getAccessTokenFromPreferences() = preferences.getAccessToken()
 
     // Сохранить рефреш токен
     fun saveRefreshTokenToPreferences(category: String) {
@@ -180,5 +217,8 @@ class LoginScreenViewModel: ViewModel() {
 
     // получить юзера из БД:
     //fun getUsersFromDB(): LiveData<List<User>> = repo.getAllFromDB()
+
+
+
 
 }

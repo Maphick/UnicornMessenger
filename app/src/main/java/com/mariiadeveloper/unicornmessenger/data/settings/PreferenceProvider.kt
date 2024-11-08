@@ -21,6 +21,24 @@ class PreferenceProvider(context: Context) {
         }
     }
 
+    fun saveCountryCode(country_code: String) {
+        preference.edit { putString(KEY_COUNTRY_CODE, country_code) }
+    }
+
+    fun getCountryCode(): String {
+        var str = preference.getString(KEY_COUNTRY_CODE, DEFAULT_VALUE) ?: DEFAULT_VALUE
+        return str
+    }
+
+    fun savePhone(phone: String) {
+        preference.edit { putString(KEY_PHONE, phone) }
+    }
+
+    fun getPhone(): String {
+        var str = preference.getString(KEY_PHONE, DEFAULT_VALUE) ?: DEFAULT_VALUE
+        return str
+    }
+
 
     fun saveRefreshToken(refresh_token: String) {
         preference.edit { putString(KEY_REFRESH_TOKEN, refresh_token) }
@@ -30,6 +48,7 @@ class PreferenceProvider(context: Context) {
         var str = preference.getString(KEY_REFRESH_TOKEN, DEFAULT_VALUE) ?: DEFAULT_VALUE
         return str
     }
+
 
     fun saveAccessToken(access_token: String) {
         preference.edit { putString(KEY_ACCESS_TOKEN, access_token) }
@@ -58,6 +77,8 @@ class PreferenceProvider(context: Context) {
 
     //Ключи для наших настроек, по ним мы их будем получать
     companion object {
+        private const val KEY_COUNTRY_CODE = "country_code"
+        private const val KEY_PHONE = "phone"
         private const val KEY_FIRST_LAUNCH = "first_launch"
         private const val KEY_REFRESH_TOKEN = "refresh_token"
         private const val KEY_ACCESS_TOKEN = "access_token"

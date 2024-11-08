@@ -54,6 +54,7 @@ dependencies {
     implementation(libs.androidx.material3)
     // HILT
     implementation(libs.hilt.android)
+    implementation(libs.androidx.runtime.livedata)
     ksp(libs.hilt.android.compiler)
     // ROOM
     implementation(libs.room.ktx)
@@ -72,6 +73,9 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
     // DATASTORE
     implementation(libs.datastore.preferences)
+    // COUNTRY PICKER
+    implementation(libs.komposecountrycodepicker)
+    //implementation("io.github.joelkanyi:komposecountrycodepicker:1.1.2")
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

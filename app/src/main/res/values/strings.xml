@@ -1,17 +1,24 @@
 <resources>
     <string name="app_name">UnicornMessenger</string>
-    <string name="send_code">Отправить код</string>
+    <string name="send_code">Запросить код</string>
+    <string name="confirm_code">Подтвердить код</string>
+    <string name="confirm_code_error">Неверный код подтверждения</string>
     <string name="no_account_register">Все еще нет аккаунта? Зарегистрируйтесь</string>
     <string name="enter_name">Имя</string>
     <string name="enter_username">Ник</string>
     <string name="register">Зарегистрироваться</string>
     <string name="already_have_an_account">Уже есть аккаунт? Войти</string>
-    <string name="enter_phone">Телефон</string>
+    <string name="enter_phone">Введите номер</string>
     <string name="enter_code">Введите код подтверждения</string>
     <string name="get_code">Получить код</string>
-    <string name="successed_register">Вот это да! Удачная регистрация</string>
-    <string name="user_exist">Такой пользователь уже есть. Войдите или зарегистрируйтесь
-    под другим номером телефона</string>
+    <string name="successed_register">Пользователь успешно зарегистрирован</string>
+    <string name="error_register">Не удалось зарегистрироваться</string>
+    <string name="user_exist">Такой пользователь уже существует</string>
+    <string name="empty_phone">Введите номер</string>
     <string name="network_problem">Проблемки с подключением</string>
     <string name="unknown_error">Неизвестная проблема</string>
+    <string name="error_data_format">Данные введены не корректно</string>
+    <string name="successed_auth">Код успешно отправлен</string>
+    <string name="error_auth">Ошибка при аутентификации</string>
+    <string name="unproccessable_entity">Необрабатываемый экзкмпляр. Введите другое имя пользователя и/или ник.</string>
 </resources>

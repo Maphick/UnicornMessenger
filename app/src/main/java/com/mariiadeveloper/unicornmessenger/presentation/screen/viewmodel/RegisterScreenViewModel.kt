@@ -1,82 +1,122 @@
 package com.mariiadeveloper.unicornmessenger.presentation.screen.viewmodel
 
 import android.util.Log
-import android.widget.Toast
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.mariiadeveloper.unicornmessenger.R
+import androidx.lifecycle.viewModelScope
 import com.mariiadeveloper.unicornmessenger.app.App
 import com.mariiadeveloper.unicornmessenger.data.dto.response.RegisterResponseDto
 import com.mariiadeveloper.unicornmessenger.data.settings.PreferenceProvider
 import com.mariiadeveloper.unicornmessenger.domain.Interactor
-import com.mariiadeveloper.unicornmessenger.presentation.navigation.Screen
-import com.mariiadeveloper.unicornmessenger.presentation.screen.state.LoginScreenEvent
+import com.mariiadeveloper.unicornmessenger.domain.Interactor.STATUS_CODE.DEFAULT
 import com.mariiadeveloper.unicornmessenger.presentation.screen.state.RegisterScreenEvent
 import com.mariiadeveloper.unicornmessenger.presentation.screen.state.RegisterScreenState
-import com.mariiadeveloper.unicornmessenger.presentation.screen.viewmodel.LoginScreenViewModel.RegisterCallback
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 
 
 class RegisterScreenViewModel: ViewModel() {
 
+
     //Инициализируем интерактор
     private var interactor: Interactor = App.instance.interactor
     private val preferences: PreferenceProvider = App.instance.preferences
+    val isRegisteredSuccessed = MutableLiveData<Int>(DEFAULT)
 
-
+    // сбросить состояние регистрации
+    fun clearRegisteredState()
+    {
+        isRegisteredSuccessed.postValue(DEFAULT)
+    }
     var state by mutableStateOf(RegisterScreenState())
         private set
 
-    fun onEvent(event: RegisterScreenEvent): Int {
-        var isSuccesedRegister = 0
-        when (event) {
-            is RegisterScreenEvent.PhoneUpdate -> state = state.copy(phone = event.newPhone)
-            is RegisterScreenEvent.NameUpdate -> state = state.copy(name = event.newName)
-            is RegisterScreenEvent.UsernameUpdated -> state =
-                state.copy(username = event.newUsername)
-
-            is RegisterScreenEvent.SendRegisterPressed -> {
-                var name = "45t43rr53242"
-                var username = "52t5r42t424g"
-
-
-                isSuccesedRegister = Register(
-                    phone = state.phone,
-                    name = state.name,
-                    username = state.username
-                )
-            }
-        }
-        return isSuccesedRegister
+    init {
+        val country_code = getCountryCodeFromPreferences()
+        val phone = getPhoneFromPreferences()
+        state.phone = "+" + country_code + phone
     }
 
+
+
+    fun onEvent(event: RegisterScreenEvent): Int {
+        var isSuccesedLogin = 0
+        when (event) {
+            //is RegisterScreenEvent.PhoneUpdate ->
+           // {
+                //state = state.copy(phone = event.newPhone)
+            //}
+            is RegisterScreenEvent.NameUpdate -> {
+                state = state.copy(name = event.newName)
+            }
+            is RegisterScreenEvent.UsernameUpdated -> {
+                state = state.copy(username = event.newUsername)
+            }
+
+            is RegisterScreenEvent.SendRegisterPressed -> {
+
+            }
+            else -> {}
+        }
+        return isSuccesedLogin
+    }
+
+
+
+    fun onRegister()
+    {
+        viewModelScope.launch {
+          register(
+                phone = state.phone,
+                name = state.name,
+                username = state.username
+            )
+        }
+    }
 
 
     // REGISTER
     // phone - номер телефона, который ввел пользователь
     // name -
     // username -
-    fun Register(phone: String, name: String, username: String): Int {
-        // результат запроса
-        var answer = 0
-        answer = interactor.registerFromApi(
-            phone = phone,
-            name = name,
-            username = username,
-            callback = object : RegisterCallback {
-                override fun onSuccess(registerResponseDto: RegisterResponseDto?) {
-                    Log.d("REGISTER", "Success")
-                    //isSuccessed = true
-                }
+    private fun register(phone: String, name: String, username: String): Job {
+        val coroutineScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
+        return coroutineScope.launch {
+            // результат запроса
+           interactor.registerFromApi(
+                phone = phone,
+                name = name,
+                username = username,
+                callback = object : RegisterCallback {
+                    override fun onSuccess(registerResponseDto: RegisterResponseDto, code: Int) {
+                        Log.d("REGISTER", "Success")
+                        isRegisteredSuccessed.postValue(code)
+                    }
 
-                override fun onFailure(s: String) {
-                    Log.d("REGISTER", "Fail")
-                    //isSuccessed = false
-                }
-            },
-        )
-        return answer
+                    override fun onFailure(s: String, code: Int) {
+                        Log.d("REGISTER", "Fail")
+                        isRegisteredSuccessed.postValue(code)
+                    }
+                },
+            )
+            }
     }
+
+    interface RegisterCallback {
+        fun onSuccess(registerResponseDto: RegisterResponseDto, code: Int)
+        fun onFailure(s: String, code: Int)
+    }
+
+    // Метод для получения кода страны
+    fun getCountryCodeFromPreferences() = preferences.getCountryCode()
+
+    // Метод для получения телефона
+    fun getPhoneFromPreferences() = preferences.getPhone()
 
 }

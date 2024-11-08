@@ -1,6 +1,7 @@
 package com.mariiadeveloper.unicornmessenger.domain
 
 import android.util.Log
+import android.widget.Toast
 import com.makashovadev.filmsearcher.data.Entity.ApiConstants
 import com.makashovadev.filmsearcher.data.Entity.MainRepository
 import com.mariiadeveloper.unicornmessenger.data.ApiInterfaces.CheckJwtApi
@@ -14,14 +15,19 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import com.mariiadeveloper.unicornmessenger.app.App
+import com.mariiadeveloper.unicornmessenger.data.ApiInterfaces.CheckAuthCodeApi
 import com.mariiadeveloper.unicornmessenger.data.ApiInterfaces.RefreshTokenApi
 import com.mariiadeveloper.unicornmessenger.data.ApiInterfaces.RegisterApi
 import com.mariiadeveloper.unicornmessenger.data.ApiInterfaces.SendAuthCodeApi
+import com.mariiadeveloper.unicornmessenger.data.dto.request.CheckAuthCodeRequestDto
 import com.mariiadeveloper.unicornmessenger.data.dto.request.RefreshTokenRequest
 import com.mariiadeveloper.unicornmessenger.data.dto.request.RegisterRequestDto
-import com.mariiadeveloper.unicornmessenger.data.dto.response.IsSuccessResponseDto
+import com.mariiadeveloper.unicornmessenger.data.dto.request.SendAuthCodeRequestDto
+import com.mariiadeveloper.unicornmessenger.data.dto.response.CheckAuthCodeResponseDto
 import com.mariiadeveloper.unicornmessenger.data.dto.response.RegisterResponseDto
-import com.mariiadeveloper.unicornmessenger.utils.Converter.convertApiToIsSuccessDto
+import com.mariiadeveloper.unicornmessenger.data.dto.response.SendAuthCodeResponseDto
+import com.mariiadeveloper.unicornmessenger.presentation.screen.viewmodel.CodeScreenViewModel
+import com.mariiadeveloper.unicornmessenger.presentation.screen.viewmodel.RegisterScreenViewModel
 import okhttp3.OkHttpClient
 import java.util.Calendar
 
@@ -33,43 +39,73 @@ class Interactor(private val repo: MainRepository) {
     // METHODS WITHOUT AUTH HEADER -----------------------------------------------------------------
     // ---------------------------------------------------------------------------------------------
 
-
+    // POST
+    // -----------------------
+    // 00000000000000000000000
+    // -----------------------
+    // /api/v1/users/send-auth-code/
+    // -----------------------
+    // Аутентификация. Получить код подтверждения по номеру телефона
+    // -----------------------
     // Function to send the auth code
-    fun sendAuthCode(phone: String, callback: LoginScreenViewModel.ApiIsSuccessCallback) {
-        // Retrofit setup (example)
+    fun sendAuthCode(
+        callback: LoginScreenViewModel.SendAuthCodeCallback,
+        country_code: String,
+        phone: String,
+        ) {
+        val phone_number = "+" + country_code + phone
         val retrofit = Retrofit.Builder()
             .baseUrl(ApiConstants.BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
         val sendAuthCodeApi = retrofit.create(SendAuthCodeApi::class.java)
-        val call = sendAuthCodeApi.sendAuthCode(phone)
-        call.enqueue(object : Callback<IsSuccessResponseDto> {
+        val sendAuthCodeRequest = SendAuthCodeRequestDto(phone_number)
+        val call =  sendAuthCodeApi.sendAuthCode(sendAuthCodeRequest)
+        call.enqueue(object : Callback<SendAuthCodeResponseDto> {
             override fun onResponse(
-                call: Call<IsSuccessResponseDto>,
-                response: Response<IsSuccessResponseDto>
+                call: Call<SendAuthCodeResponseDto>,
+                response: Response<SendAuthCodeResponseDto>
             ) {
                 if (response.isSuccessful) {
                     Log.d("SendAuthCodeApi", "Auth code was sent: ${response.body()}")
                     // Convert the response to your desired data class
-                    val isSuccess = convertApiToIsSuccessDto(response.body()!!)
-                    callback.onSuccess(isSuccess)
+                    val sendAuthCode = response.body()
+                    if (sendAuthCode != null) {
+                        sendAuthCode.is_success
+                        //  успешный запрос
+                        callback.onSuccess(sendAuthCode, OK)
+                    }
+                    else {
+                        //  неизвестная ошибка
+                        callback.onSuccess(SendAuthCodeResponseDto(false), UNKNOWN_ERROR)
+                    }
+
                 } else {
                     Log.e(
                         "SendAuthCodeApi",
                         "Error sending auth code: ${response.errorBody()?.string()}"
                     )
                     callback.onFailure(
-                        response.errorBody()?.string() ?: "Unknown error"
+                        response.errorBody()?.string() ?: "Unknown error",
+                        UN_AUTHORIZED
                     )
+                    // не авторизован
+
                 }
             }
 
-            override fun onFailure(call: Call<IsSuccessResponseDto>, t: Throwable) {
+            override fun onFailure(call: Call<SendAuthCodeResponseDto>, t: Throwable) {
                 Log.e("SendAuthCodeApi", "Error sending auth code: ${t.message}")
-                callback.onFailure(t.message ?: "Network error")
+                callback.onFailure(
+                    t.message?: "Network error",
+                    NETWORK_ERROR
+
+                )
             }
         })
+
     }
+
 
     // POST
     // -----------------------
@@ -79,8 +115,7 @@ class Interactor(private val repo: MainRepository) {
     // -----------------------
     // Аутентификация. Получить код подтверждения по номеру телефона
     // -----------------------
-    /*@SuppressLint("SuspiciousIndentation")
-    fun sendAuthCode(callback: LoginScreenViewModel.ApiIsSuccessCallback, phone: String){
+    /*fun sendAuthCode2(callback: LoginScreenViewModel.ApiIsSuccessCallback, phone: String){
             val sendAuthCodeApi = Retrofit.Builder()
                 .baseUrl(ApiConstants.BASE_URL) // Replace with your API base URL
                 .addConverterFactory(GsonConverterFactory.create()) // Or other converter you prefer
@@ -94,8 +129,8 @@ class Interactor(private val repo: MainRepository) {
         )
 
 
-        sendAuthCodeApi.sendAuthCode(phone).enqueue(object : Callback<IsSuccessDto> {
-                override fun onResponse(call: Call<IsSuccessDto>, response: Response<IsSuccessDto>) {
+        sendAuthCodeApi.sendAuthCode(phone).enqueue(object : Callback<IsSuccessResponseDto> {
+                override fun onResponse(call: Call<IsSuccessResponseDto>, response: Response<IsSuccessResponseDto) {
                     if (response.isSuccessful) {
                         Log.d("SendAuthCodeApi", "Auth code was send: ${response.body()}")
                         callback.onSuccess(response.body()?.let { Converter.convertApiToIsSuccessDto(it) })
@@ -107,14 +142,12 @@ class Interactor(private val repo: MainRepository) {
 
                     }
                 }
-            override fun onFailure(p0: Call<IsSuccessDto>, p1: Throwable) {
+            override fun onFailure(p0: Call<IsSuccessResponseDto>, p1: Throwable) {
                 Log.e("SendAuthCodeApi", "Error sending auth code: ${p1.message}")
             }
         })
 
-
-        }
-    */
+        }*/
 
 
     // POST
@@ -125,8 +158,71 @@ class Interactor(private val repo: MainRepository) {
     // -----------------------
     // Аутентификация. Отправить код подтверждения на сервер и получить токены доступа
     // -----------------------
-    fun authFromApi() {
+    fun checkAuthCodeFromApi(
+        callback: CodeScreenViewModel.CheckAuthCodeCallback,
+        phone: String,
+        code: String,
+        ) {
 
+            val retrofit = Retrofit.Builder()
+                .baseUrl(ApiConstants.BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+            val checkAuthCodeApi = retrofit.create(CheckAuthCodeApi::class.java)
+            val checkAuthCodeRequest = CheckAuthCodeRequestDto(phone = phone, code = code)
+            val call = checkAuthCodeApi.checkAuthCode(checkAuthCodeRequest)
+            call.enqueue(object : Callback<CheckAuthCodeResponseDto> {
+                override fun onResponse(
+                    call: Call<CheckAuthCodeResponseDto>,
+                    response: Response<CheckAuthCodeResponseDto>
+                ) {
+                    if (response.isSuccessful) {
+                        Log.d("SendAuthCodeApi", "Auth code was sent: ${response.body()}")
+                        // Convert the response to your desired data class
+                        val checkAuthCode = response.body()
+                        if (checkAuthCode != null) {
+
+                            if (checkAuthCode.is_user_exists) {
+                                // такой пользователь уже существует
+                                // авторизуем пользоваткля
+                                callback.onSuccess(checkAuthCode, EXIST_USER)
+                            }
+                            else
+                            {
+                                // новый пользователь
+                                // отправляем на регистрацию
+                                callback.onSuccess(checkAuthCode, NOT_EXIST_USER)
+                            }
+                        }
+                        else {
+                            //  неизвестная ошибка
+                            callback.onSuccess(CheckAuthCodeResponseDto("","",0,false), UNKNOWN_ERROR)
+                        }
+
+                    } else {
+                        // неправильный код подтверждения
+                        Log.e(
+                            "SendAuthCodeApi",
+                            "Error sending auth code: ${response.errorBody()?.string()}"
+                        )
+                        callback.onFailure(
+                            response.errorBody()?.string() ?: "Unknown error",
+                            CONFIRM_CODE_ERROR
+                        )
+                        // не авторизован
+
+                    }
+                }
+
+                override fun onFailure(call: Call<CheckAuthCodeResponseDto>, t: Throwable) {
+                    Log.e("SendAuthCodeApi", "Error sending auth code: ${t.message}")
+                    callback.onFailure(
+                        t.message?: "Network error",
+                        NETWORK_ERROR
+
+                    )
+                }
+            })
     }
 
     // POST
@@ -138,13 +234,11 @@ class Interactor(private val repo: MainRepository) {
     //  Регистрация. Отправить телефон, имя пользователя и ник на сервер и получить токены доступа
     // -----------------------
     fun registerFromApi(
-        callback: LoginScreenViewModel.RegisterCallback,
+        callback: RegisterScreenViewModel.RegisterCallback,
         phone: String,
         name: String,
         username: String
-    ) : Int {
-        // если пользователь зареган, возвращаем 0
-        var answer = 0
+    ) {
         val retrofit = Retrofit.Builder()
             .baseUrl(ApiConstants.BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
@@ -171,30 +265,38 @@ class Interactor(private val repo: MainRepository) {
                     // фиксируем время последнего обновления
                     val currentTime = Calendar.getInstance().timeInMillis
                     saveLastUpdateTimeToPreferences(currentTime)
-                    callback.onSuccess(registerResponse)
-                    answer = 0
+                    // успешная регистрация
+                    if (registerResponse != null) {
+                        //  успешный запрос
+                        callback.onSuccess(registerResponse, OK)
+                    }
+                    else {
+                        callback.onSuccess(RegisterResponseDto(), UNKNOWN_ERROR)
+                    }
                 } else {
                     Log.e(
                         "RegisterApi",
                         "Error during registration: ${response.errorBody()?.string()}"
                     )
-                    callback.onFailure(response.errorBody()?.string() ?: "Unknown error")
-                    // успешныц успех, но нет
+                    callback.onFailure(
+                        response.errorBody()?.string() ?: "Unknown error",
+                        response.code()
+
+                    )
                     // такой пользователь уже есть
-                    answer = 1
                 }
 
             }
 
             override fun onFailure(call: Call<RegisterResponseDto>, t: Throwable) {
                 Log.e("RegisterApi", "Network error during registration: ${t.message}")
-                callback.onFailure(t.message ?: "Network error")
+                callback.onFailure(
+                    t.message ?: "Network error",
+                    NETWORK_ERROR
+                )
                 // проблемки с сетью
-                answer = -1
             }
         })
-        // возвращаем результат запроса
-        return  answer
     }
 
 
@@ -310,23 +412,19 @@ class Interactor(private val repo: MainRepository) {
                     call: Call<CheckJwtResponseDto>,
                     response: Response<CheckJwtResponseDto>
                 ) {
-
-                    callback.onSuccess(
-                        response.body()?.let { Converter.convertApiToCheckJwtDto(it) })
-
-                    if (response.isSuccessful) {
-                        Log.d("CheckJwtApi", "JWT is valid: ${response.body()}")
-                    } else {
-                        Log.e(
-                            "CheckJwtApi",
-                            "Error checking JWT: ${response.errorBody()?.string()}"
-                        )
+                    val checkJwtResponse = response.body()
+                    if (checkJwtResponse != null) {
+                        callback.onSuccess(checkJwtResponse, OK)
+                    }
+                    else
+                    {
+                        callback.onSuccess(CheckJwtResponseDto(false, false), UNKNOWN_ERROR)
                     }
                 }
 
                 override fun onFailure(call: Call<CheckJwtResponseDto>, t: Throwable) {
                     //В случае провала вызываем другой метод коллбека
-                    callback.onFailure()
+                    callback.onFailure(UNKNOWN_ERROR)
                     // Handle network errors
                     Log.e("CheckJwtApi", "Network error: ${t.message}")
                 }
@@ -348,6 +446,8 @@ class Interactor(private val repo: MainRepository) {
         // SAVE ACCESS AND REFRESH TOKEN ---------------------------------------------------------------
         // ---------------------------------------------------------------------------------------------
 
+
+
         // Метод для сохраненя аксесс токена
         fun saveAccessTokenToPreferences(access_token: String) {
             preferences.saveAccessToken(access_token = access_token)
@@ -364,6 +464,20 @@ class Interactor(private val repo: MainRepository) {
 
         //Метод для получения рефреш токена
         fun geteRefreshTokenromPreferences() = preferences.getRefreshToken()
+
+    // ответы сервера
+    companion object STATUS_CODE {
+        const val OK = 200
+        const val UN_AUTHORIZED = 401
+        const val CONFIRM_CODE_ERROR = 404
+        const val UNPROCCESSABLE_ENTITY = 422
+        const val NETWORK_ERROR = 500
+        const val UNKNOWN_ERROR = 520
+        const val DEFAULT = 0
+        const val EXIST_USER = -200
+        const val NOT_EXIST_USER = -300
+        const val EMPTY_PHONE = -1
+    }
 
 }
 

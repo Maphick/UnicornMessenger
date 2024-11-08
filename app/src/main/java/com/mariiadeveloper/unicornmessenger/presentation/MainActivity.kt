@@ -1,5 +1,6 @@
 package com.mariiadeveloper.unicornmessenger.presentation
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -18,6 +19,7 @@ import com.mariiadeveloper.unicornmessenger.presentation.navigation.MainNav
 import com.mariiadeveloper.unicornmessenger.presentation.ui.theme.UnicornMessengerTheme
 
 class MainActivity : ComponentActivity() {
+    @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
