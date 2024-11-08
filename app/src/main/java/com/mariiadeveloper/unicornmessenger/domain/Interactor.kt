@@ -1,6 +1,7 @@
 package com.mariiadeveloper.unicornmessenger.domain
 
 import android.util.Log
+import android.widget.Toast
 import com.makashovadev.filmsearcher.data.Entity.ApiConstants
 import com.makashovadev.filmsearcher.data.Entity.MainRepository
 import com.mariiadeveloper.unicornmessenger.data.ApiInterfaces.CheckJwtApi
@@ -142,9 +143,7 @@ class Interactor(private val repo: MainRepository) {
         phone: String,
         name: String,
         username: String
-    ) : Int {
-        // если пользователь зареган, возвращаем 0
-        var answer = 0
+    ) {
         val retrofit = Retrofit.Builder()
             .baseUrl(ApiConstants.BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
@@ -172,7 +171,6 @@ class Interactor(private val repo: MainRepository) {
                     val currentTime = Calendar.getInstance().timeInMillis
                     saveLastUpdateTimeToPreferences(currentTime)
                     callback.onSuccess(registerResponse)
-                    answer = 0
                 } else {
                     Log.e(
                         "RegisterApi",
@@ -181,7 +179,6 @@ class Interactor(private val repo: MainRepository) {
                     callback.onFailure(response.errorBody()?.string() ?: "Unknown error")
                     // успешныц успех, но нет
                     // такой пользователь уже есть
-                    answer = 1
                 }
 
             }
@@ -190,11 +187,8 @@ class Interactor(private val repo: MainRepository) {
                 Log.e("RegisterApi", "Network error during registration: ${t.message}")
                 callback.onFailure(t.message ?: "Network error")
                 // проблемки с сетью
-                answer = -1
             }
         })
-        // возвращаем результат запроса
-        return  answer
     }
 
 

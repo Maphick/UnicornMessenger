@@ -6,10 +6,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import com.makashovadev.filmsearcher.domain.CheckJwt
 import com.makashovadev.filmsearcher.domain.IsSuccess
 import com.mariiadeveloper.unicornmessenger.R
 import com.mariiadeveloper.unicornmessenger.app.App
+import com.mariiadeveloper.unicornmessenger.data.dto.response.CheckJwtResponseDto
 import com.mariiadeveloper.unicornmessenger.data.dto.response.RegisterResponseDto
 import com.mariiadeveloper.unicornmessenger.data.settings.PreferenceProvider
 import com.mariiadeveloper.unicornmessenger.domain.Interactor
@@ -69,7 +69,7 @@ class LoginScreenViewModel: ViewModel() {
     //  SEND AUTH CODE
     // phone - номер телефона, который ввел пользователь
     fun SendAuthCode(phone: String): Int {
-        var isSuccesedSendAuthCode = 0
+        var isSuccesedSendAuthCode = -5
         interactor.sendAuthCode(
             phone = phone,
             callback = object : ApiIsSuccessCallback {
@@ -110,11 +110,11 @@ class LoginScreenViewModel: ViewModel() {
 
     //  CHECK JWT
     // bearer_token - акссесс токен, который пришел к нам от сервера после регистрации/аутентификации
-    fun CheckJwt(bearer_token: String) {
+   /* fun CheckJwt(bearer_token: String) {
         interactor.checkJwtFromApi(
             bearer_token = bearer_token,
             callback = object : ApiCheckJwtCallback {
-            override fun onSuccess(checkJwt: CheckJwt?) {
+            override fun onSuccess(checkJwt: CheckJwtResponseDto?) {
                 Log.d("SEND_AUTH_CODE", "Success")
             }
             override fun onFailure() {
@@ -123,7 +123,7 @@ class LoginScreenViewModel: ViewModel() {
         },
         )
     }
-
+*/
     // CALLBACKS -----------------------------------------------------------------------------------
     // интерфейсы, которые будут отвечать за коллбэки
 
@@ -145,7 +145,7 @@ class LoginScreenViewModel: ViewModel() {
 
     // интерфейс, который будет отвечать за коллбэк
     interface ApiCheckJwtCallback {
-        fun onSuccess(checkJwt: CheckJwt?)
+        fun onSuccess(checkJwt: CheckJwtResponseDto?)
         fun onFailure()
     }
 

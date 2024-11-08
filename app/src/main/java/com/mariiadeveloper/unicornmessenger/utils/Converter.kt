@@ -1,6 +1,6 @@
 package com.mariiadeveloper.unicornmessenger.utils
 
-import com.makashovadev.filmsearcher.domain.CheckJwt
+
 import com.makashovadev.filmsearcher.domain.IsSuccess
 import com.mariiadeveloper.unicornmessenger.data.dto.response.CheckJwtResponseDto
 import com.mariiadeveloper.unicornmessenger.data.dto.response.IsSuccessResponseDto
@@ -10,10 +10,10 @@ object Converter {
 
 
 
-    fun convertApiToCheckJwtDto(checkJwtDto: CheckJwtResponseDto): CheckJwt {
+    fun convertApiToCheckJwtDto(checkJwtDto: CheckJwtResponseDto): CheckJwtResponseDto {
         val result =
             checkJwtDto.let {
-                CheckJwt(
+                CheckJwtResponseDto(
                     errors = it.errors,
                     is_valid = it.is_valid
 

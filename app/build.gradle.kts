@@ -54,6 +54,7 @@ dependencies {
     implementation(libs.androidx.material3)
     // HILT
     implementation(libs.hilt.android)
+    implementation(libs.androidx.runtime.livedata)
     ksp(libs.hilt.android.compiler)
     // ROOM
     implementation(libs.room.ktx)

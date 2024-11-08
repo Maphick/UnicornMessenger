@@ -153,9 +153,12 @@ fun LoginView(
                 .height(50.dp),
             onClick = {
                 // зарегистрироваться
-                val isSuccesedSendCode = onEvent(LoginScreenEvent.SendAuthCodePresser())
+               onEvent(LoginScreenEvent.SendAuthCodePresser())
                 // прошла ли регистрация успешно
-                showToast( isSuccesedSendCode)
+                /*showToast(
+                    context = co
+                    isSuccesedSendCode
+                )*/
                 // переходим на главный экран
                 confirmCodeScreen
             },
