@@ -41,6 +41,8 @@ import com.mariiadeveloper.unicornmessenger.presentation.ui.component.StyledButt
 
 @Composable
 fun RegisterScreen(
+
+
     // чтобы не передавать нав хост контроллер, тк могут быть утечки памяти
     onNavigateTo: (Screen) -> Unit = {},
     // переход на главный экран

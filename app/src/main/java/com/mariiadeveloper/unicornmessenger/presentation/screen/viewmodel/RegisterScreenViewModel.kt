@@ -29,6 +29,7 @@ class RegisterScreenViewModel: ViewModel() {
     private val preferences: PreferenceProvider = App.instance.preferences
     val isRegisteredSuccessed = MutableLiveData<Int>(registerState.DEFAULT)
 
+
     // сбросить состояние регистрации
     fun clearRegisteredState()
     {
