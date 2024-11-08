@@ -1,4 +1,4 @@
-package com.mariiadeveloper.newsapp.presentation.ui
+package com.mariiadeveloper.unicornmessenger.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
