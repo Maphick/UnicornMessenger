@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.sp
 import com.joelkanyi.jcomposecountrycodepicker.component.KomposeCountryCodePicker
 import com.mariiadeveloper.unicornmessenger.R
 import com.mariiadeveloper.unicornmessenger.presentation.screen.state.LoginScreenEvent
+import com.mariiadeveloper.unicornmessenger.presentation.ui.theme.ButtonFilterColor
 
 @Composable
 fun StyledButton(
@@ -37,7 +38,8 @@ fun StyledButton(
         onClick = onClick,
         shape = RoundedCornerShape(size = 15.dp),
         colors = ButtonDefaults.buttonColors(
-            containerColor = MaterialTheme.colorScheme.primary
+            containerColor = ButtonFilterColor
+            //MaterialTheme.colorScheme.primary
         )
     ) {
         Box(

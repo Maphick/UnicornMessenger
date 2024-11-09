@@ -2,10 +2,14 @@ package com.mariiadeveloper.unicornmessenger.presentation.screen
 
 import android.util.Log
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -26,7 +30,10 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -38,6 +45,7 @@ import com.mariiadeveloper.unicornmessenger.domain.ChatMessage
 import com.mariiadeveloper.unicornmessenger.presentation.screen.main.state.ChatWithUserScreenState
 import com.mariiadeveloper.unicornmessenger.presentation.screen.main.viewmodel.ChatWithUserViewModel
 import com.mariiadeveloper.unicornmessenger.presentation.screen.main.viewmodel.ChatWithUserViewModelFactory
+import com.mariiadeveloper.unicornmessenger.presentation.ui.theme.BoxFilterColor
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -58,15 +66,24 @@ fun ChatWithUserScreen(
             topBar = {
                 CenterAlignedTopAppBar(
                     colors = TopAppBarDefaults.topAppBarColors(
-                        // containerColor = MaterialTheme.colorScheme.primaryContainer,
-                        titleContentColor = MaterialTheme.colorScheme.onPrimary,
+                        containerColor = MaterialTheme.colorScheme.background,
+                        titleContentColor = MaterialTheme.colorScheme.onBackground,
                     ),
                     title = {
-                        Text(
-                            text = "Comments for FeedPost id: ${currentState.chat.id}",
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
-                        )
+                        Row()
+                        {
+                            Text(
+                                text = "${currentState.chat.reporterName}",
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Image(
+                                    modifier = Modifier.size(24.dp),
+                                    painter = painterResource(id = R.drawable.repoter_avatar),
+                                    contentDescription = null
+                            )
+                        }
                     },
                     navigationIcon = {
                         IconButton(onClick = { onBackPressed() }) {
@@ -81,6 +98,21 @@ fun ChatWithUserScreen(
             }
         )
         { paddingsValues ->
+            Image(
+                painter = painterResource(R.drawable.image_chat_app),
+                contentDescription = "Unicorn Messanger",
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(
+                        top = 250.dp
+                    ),
+                contentScale = ContentScale.Crop
+            )
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(BoxFilterColor)
+            )
             LazyColumn(
                 modifier = Modifier.padding(paddingsValues),
                 contentPadding = PaddingValues(
@@ -115,30 +147,47 @@ private fun MessageItem(
             )
     )
     {
-        Image(
-            modifier = Modifier.size(24.dp),
-            painter = painterResource(id = R.drawable.repoter_avatar),
-            contentDescription = null
-        )
+            Column(
+
+            )
+            {
+                Image(
+                    modifier = Modifier.size(24.dp),
+                    painter = painterResource(id = R.drawable.repoter_avatar),
+                    contentDescription = null
+                )
+            }
         Spacer(modifier = Modifier.width(8.dp))
         Column {
             Text(
-                text = "${message.reporterName} MessageId: ${message.id}",
-                color = MaterialTheme.colorScheme.onPrimary,
-                fontSize = 12.sp
+                text = "${message.reporterName}",
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onBackground,
+                fontSize = 20.sp
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
-                text = message.messageText,
-                color = MaterialTheme.colorScheme.onPrimary,
-                fontSize = 14.sp
-            )
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(
-                text = message.publicationDate,
-                color = MaterialTheme.colorScheme.onSecondary,
+                text = "MessageId: ${message.id} /n " +
+                        "Messagetext: ${message.messageText}",
+                color = MaterialTheme.colorScheme.outline,
                 fontSize = 12.sp
             )
+
+            Spacer(modifier = Modifier.height(4.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Row(
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    Text(
+                        text = message.publicationDate,
+                        color = MaterialTheme.colorScheme.onSecondary,
+                        fontSize = 12.sp
+                    )
+                }
+            }
+
         }
     }
 }

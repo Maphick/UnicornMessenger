@@ -35,12 +35,6 @@ class MainActivity : ComponentActivity() {
                     MainContent(
                         modifier = Modifier.padding(innerPadding)
                    )
-                   /* EditProfileScreen(
-
-                    ) { }*/
-                    //UserProfileScreen(
-
-                    //)
                 }
             }
         }
@@ -58,13 +52,4 @@ fun MainContent(
        navHostController = rememberNavController(),
        modifier = modifier
    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    UnicornMessengerTheme {
-        MainContent(
-        )
-    }
 }
