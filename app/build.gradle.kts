@@ -55,6 +55,9 @@ dependencies {
     // HILT
     implementation(libs.hilt.android)
     implementation(libs.androidx.runtime.livedata)
+    implementation(libs.androidx.foundation.android)
+    implementation(libs.firebase.vertexai)
+    implementation(libs.androidx.foundation.android)
     ksp(libs.hilt.android.compiler)
     // ROOM
     implementation(libs.room.ktx)
@@ -75,6 +78,8 @@ dependencies {
     implementation(libs.datastore.preferences)
     // COUNTRY PICKER
     implementation(libs.komposecountrycodepicker)
+    // COIL
+    implementation(libs.coil)
     //implementation("io.github.joelkanyi:komposecountrycodepicker:1.1.2")
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

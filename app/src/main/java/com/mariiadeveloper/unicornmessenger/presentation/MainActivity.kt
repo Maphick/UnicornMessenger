@@ -16,6 +16,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.rememberNavController
 import com.mariiadeveloper.unicornmessenger.presentation.navigation.MainNav
+import com.mariiadeveloper.unicornmessenger.presentation.screen.EditProfileScreen
+import com.mariiadeveloper.unicornmessenger.presentation.screen.UserProfileScreen
 import com.mariiadeveloper.unicornmessenger.presentation.ui.theme.UnicornMessengerTheme
 
 class MainActivity : ComponentActivity() {
@@ -32,7 +34,13 @@ class MainActivity : ComponentActivity() {
                 ) { innerPadding ->
                     MainContent(
                         modifier = Modifier.padding(innerPadding)
-                    )
+                   )
+                   /* EditProfileScreen(
+
+                    ) { }*/
+                    //UserProfileScreen(
+
+                    //)
                 }
             }
         }

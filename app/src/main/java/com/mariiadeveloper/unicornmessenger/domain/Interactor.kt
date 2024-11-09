@@ -16,23 +16,30 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import com.mariiadeveloper.unicornmessenger.app.App
 import com.mariiadeveloper.unicornmessenger.data.ApiInterfaces.CheckAuthCodeApi
+import com.mariiadeveloper.unicornmessenger.data.ApiInterfaces.PutUserInfoApi
 import com.mariiadeveloper.unicornmessenger.data.ApiInterfaces.RefreshTokenApi
 import com.mariiadeveloper.unicornmessenger.data.ApiInterfaces.RegisterApi
 import com.mariiadeveloper.unicornmessenger.data.ApiInterfaces.SendAuthCodeApi
+import com.mariiadeveloper.unicornmessenger.data.Entity.User
+import com.mariiadeveloper.unicornmessenger.data.dto.request.Avatar
 import com.mariiadeveloper.unicornmessenger.data.dto.request.CheckAuthCodeRequestDto
+import com.mariiadeveloper.unicornmessenger.data.dto.request.PutUserInfoRequestDto
 import com.mariiadeveloper.unicornmessenger.data.dto.request.RefreshTokenRequest
 import com.mariiadeveloper.unicornmessenger.data.dto.request.RegisterRequestDto
 import com.mariiadeveloper.unicornmessenger.data.dto.request.SendAuthCodeRequestDto
+import com.mariiadeveloper.unicornmessenger.data.dto.response.Avatars
 import com.mariiadeveloper.unicornmessenger.data.dto.response.CheckAuthCodeResponseDto
+import com.mariiadeveloper.unicornmessenger.data.dto.response.PutUserInfoResponseDto
 import com.mariiadeveloper.unicornmessenger.data.dto.response.RegisterResponseDto
 import com.mariiadeveloper.unicornmessenger.data.dto.response.SendAuthCodeResponseDto
 import com.mariiadeveloper.unicornmessenger.presentation.screen.viewmodel.CodeScreenViewModel
+import com.mariiadeveloper.unicornmessenger.presentation.screen.viewmodel.ProfileScreenViewModel
 import com.mariiadeveloper.unicornmessenger.presentation.screen.viewmodel.RegisterScreenViewModel
 import okhttp3.OkHttpClient
 import java.util.Calendar
 
 
-class Interactor(private val repo: MainRepository) {
+class Interactor() {
     private val context = App.instance.applicationContext
     var preferences = PreferenceProvider(context)
 
@@ -384,10 +391,75 @@ class Interactor(private val repo: MainRepository) {
         // -----------------------
         // Пользователь. Отправить данные пользователя на сервер
         // -----------------------
-        fun putUserDataFromApi() {
+        fun putUserInfoFromApi(
+            callback: ProfileScreenViewModel.ProfileCallback,
+            user: User,
+            bearer_token: String
+            ) {
+                val retrofit = Retrofit.Builder()
+                    .baseUrl(ApiConstants.BASE_URL)
+                    .addConverterFactory(GsonConverterFactory.create()) // Or other converter you prefer
+                    .build()
+            val putUserInfoApi = retrofit.create(PutUserInfoApi::class.java)
+            val putUserInfoRequest =  PutUserInfoRequestDto(
+                avatar = Avatar(
+                    "", user.avatar
+                ),
+                username = user.username,
+                birthday = user.dateOfBirth,
+                city = user.city,
+                instagram = user.instagram,
+                vk = user.vk,
+                name = user.name,
+                status = user.status
+            )
+
+            val bearerToken = bearer_token
+            val call = putUserInfoApi.putUserInfo(bearer_token, putUserInfoRequest)
+            call.enqueue(object : Callback<PutUserInfoResponseDto> {
+                override fun onResponse(
+                    call: Call<PutUserInfoResponseDto>,
+                    response: Response<PutUserInfoResponseDto>
+                ) {
+                    if (response.isSuccessful) {
+                        Log.d("SendAuthCodeApi", "Auth code was sent: ${response.body()}")
+                        // Convert the response to your desired data class
+                        val putUserInfo = response.body()
+                        if (putUserInfo != null) {
+                           // sendAuthCode.is_success
+                            //  успешный запрос
+                            callback.onSuccess(putUserInfo, OK)
+                        }
+                        else {
+                            //  неизвестная ошибка
+                            callback.onSuccess(PutUserInfoResponseDto(Avatars("", "", "")), UNKNOWN_ERROR)
+                        }
+
+                    } else {
+                        Log.e(
+                            "SendAuthCodeApi",
+                            "Error sending auth code: ${response.errorBody()?.string()}"
+                        )
+                        callback.onFailure(
+                            response.errorBody()?.string() ?: "Unknown error",
+                            UN_AUTHORIZED
+                        )
+                        // не авторизован
+
+                    }
+                }
+
+                override fun onFailure(call: Call<PutUserInfoResponseDto>, t: Throwable) {
+                    Log.e("SendAuthCodeApi", "Error sending auth code: ${t.message}")
+                    callback.onFailure(
+                        t.message?: "Network error",
+                        NETWORK_ERROR
+
+                    )
+                }
+            })
 
         }
-
         // GET
         // -----------------------
         // Auth type - Bearer token

@@ -2,7 +2,6 @@ package com.mariiadeveloper.unicornmessenger.presentation.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -10,11 +9,9 @@ import com.mariiadeveloper.unicornmessenger.presentation.screen.CodeScreen
 import com.mariiadeveloper.unicornmessenger.presentation.screen.LoginScreen
 import com.mariiadeveloper.unicornmessenger.presentation.screen.MainScreen
 import com.mariiadeveloper.unicornmessenger.presentation.screen.RegisterScreen
-import com.mariiadeveloper.unicornmessenger.presentation.screen.viewmodel.LoginScreenViewModel
 
 
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.Serializer
 
 
 // Serialization нужен, чтобы преобразовать  data object в строки
@@ -77,9 +74,10 @@ fun MainNav(
             )
         }
         composable<Screen.Main> {
-            MainScreen {navigateTo ->
+            MainScreen()
+            /*MainScreen {navigateTo ->
                 navHostController.navigate(navigateTo)
-            }
+            }*/
         }
 
     }

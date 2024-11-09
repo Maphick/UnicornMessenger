@@ -8,7 +8,7 @@ import androidx.annotation.RequiresApi
 
 // класс IsSuccess, который мы кладем в интерактор
 //@Parcelize
-data class IsSuccess(
+/*data class IsSuccess(
     var  is_success: Boolean = true
 ) : Parcelable {
 
@@ -39,4 +39,4 @@ data class IsSuccess(
             return arrayOfNulls(size)
         }
     }
-}
+}*/

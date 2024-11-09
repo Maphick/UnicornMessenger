@@ -21,4 +21,13 @@
     <string name="successed_auth">Код успешно отправлен</string>
     <string name="error_auth">Ошибка при аутентификации</string>
     <string name="unproccessable_entity">Необрабатываемый экзкмпляр. Введите другое имя пользователя и/или ник.</string>
+    <string name="userName">Имя пользователя</string>
+    <string name="city">Город</string>
+    <string name="dateOfBirth">Дата рождения</string>
+    <string name="aboutMe">Обо мне</string>
+    <string name="navigation_item_main">Главная</string>
+    <string name="navigation_item_profile">Профиль</string>
+    <string name="reporter_name">Иван Иванов </string>
+    <string name="message_example">Съешь же ещё этих мягких французских булок, да выпей чаю.</string>
+    <string name="navigation_item_favourite">Избранное</string>
 </resources>

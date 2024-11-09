@@ -225,18 +225,6 @@ fun RegisterView(
                 )
             }
         )
-        Text(
-            text = stringResource(R.string.already_have_an_account),
-            fontSize = 16.sp,
-            fontFamily = FontFamily(Font(DeviceFontFamilyName("sans-serif"))),
-            modifier = Modifier
-                .padding(
-                    top = 20.dp
-                )
-                .clickable {
-                    onNavigateTo(Screen.Login)
-                }
-        )
     }
 }
 

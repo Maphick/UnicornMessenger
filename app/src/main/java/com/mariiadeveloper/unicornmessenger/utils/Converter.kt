@@ -1,7 +1,5 @@
 package com.mariiadeveloper.unicornmessenger.utils
 
-
-import com.makashovadev.filmsearcher.domain.IsSuccess
 import com.mariiadeveloper.unicornmessenger.data.dto.response.CheckJwtResponseDto
 
 
