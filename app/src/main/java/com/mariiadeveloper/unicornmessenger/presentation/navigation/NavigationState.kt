@@ -26,8 +26,8 @@ class NavigationState(
         }
     }
 
-    fun navigateToComments() {
-        navHostController.navigate(Screens.Home.route)
+    fun navigateToMessages() {
+        navHostController.navigate(Screens.Messages.route)
     }
 
 }

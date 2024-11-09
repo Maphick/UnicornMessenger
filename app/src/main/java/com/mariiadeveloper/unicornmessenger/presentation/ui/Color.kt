@@ -1,16 +1,18 @@
 package com.mariiadeveloper.unicornmessenger.presentation.ui.theme
 
 import androidx.compose.ui.graphics.Color
+val BoxFilterColor = Color(0x30E72ACC)
+val ButtonFilterColor = Color(0x8CFFB2B6)
 
 val primary_dark  = Color(0xFFFFB2B6) // selected pager 3A3333
 val tertiary_dark = Color(0xFFFFB2B6)
 val secondary_dark = Color(0xFF9F8C8C)
 //Color(0xFFFFDADB) // not_now_dark
 val dark_dark  = Color(0xFF0F0F0F)
-val background_dark  = Color(0xFF0F0F0F)
+val background_dark  = Color(0xFF34043D)
 val surface_dark = Color(0xFF181212)
 val not_now_dark  = Color(0xFFFFDADB)
-val secondary_container_dark = Color(0xFF7D2935)
+val secondary_container_dark = Color(0x407D2935)
 val surface_container_dark = Color(0xFF3A3333) //
 val surface_container_highest = Color(0xFF3A333) //
 val inactiveColorPager  = Color(0xFF3A3333)
@@ -56,8 +58,8 @@ val surface_variant_light  = Color(0xFFD7C1C2)
 //Color.Red
 //Color(0xFF40000E) // not_now_dark
 val dark_light  = Color(0xFF0F0F0F)
-val background_light  = Color(0xFFFFFBFF) // text
-val secondary_container_light = Color(0xFFFFDADB)
+val background_light  = Color(0xFFCE9ACE) // text
+val secondary_container_light = Color(0x40AF1D4E)
 val surface_container_light = Color(0xFFECE0DF) //
 //val on_primary_light =
 //val on_secondary_light =

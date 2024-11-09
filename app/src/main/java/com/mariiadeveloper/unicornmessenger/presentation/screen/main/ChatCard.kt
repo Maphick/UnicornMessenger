@@ -1,6 +1,7 @@
 package com.mariiadeveloper.unicornmessenger.presentation.screen.main
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -39,9 +40,14 @@ fun ChatCard(
 ) {
     Card(
         modifier = modifier
+
+            .padding(
+                8.dp
+            )
     ) {
         Column(
             modifier = Modifier
+                .background(MaterialTheme.colorScheme.secondaryContainer)
                 .clickable {
                     onChatClickListener(chat)
                 }
@@ -54,86 +60,7 @@ fun ChatCard(
     }
 }
 
-@Composable
-private fun Statistics(
-    statistics: List<StatisticItem>,
-    onLikeClickListener: (StatisticItem) -> Unit,
-    onShareClickListener: (StatisticItem) -> Unit,
-    onViewsClickListener: (StatisticItem) -> Unit,
-    onCommentClickListener: (StatisticItem) -> Unit
-)
-{
-    Row{
-        Row(Modifier.weight(1f)){
-            val viewsItem = statistics.getItemByType(StatisticType.VIEWS)
-            IconWithText(
-                iconResId = R.drawable.ic_views_count,
-                text = viewsItem.count.toString(),
-                onItemClickListener = {
-                    onViewsClickListener(viewsItem)
-                }
-            )
-        }
-        Row( Modifier.weight(1f),
-            horizontalArrangement = Arrangement.SpaceBetween
-            ){
-            val sharesItem = statistics.getItemByType(StatisticType.SHARES)
-            IconWithText(
-                iconResId = R.drawable.ic_share,
-                text = sharesItem.count.toString(),
-                onItemClickListener = {
-                    onShareClickListener(sharesItem)
-                }
-            )
-            val commentsItem = statistics.getItemByType(StatisticType.COMMENTS)
-            IconWithText(
-                iconResId = R.drawable.ic_comment,
-                text = commentsItem.count.toString(),
-                onItemClickListener = {
-                    onCommentClickListener(commentsItem)
-                }
-            )
-            val likesItem = statistics.getItemByType(StatisticType.LIKES)
-            IconWithText(
-                iconResId = R.drawable.ic_like,
-                text = likesItem.count.toString(),
-                onItemClickListener = {
-                    onLikeClickListener(likesItem)
-                }
-             )
-        }
-    }
-}
 
-private fun List<StatisticItem>.getItemByType(type: StatisticType): StatisticItem {
-    return this.find { it.type == type } ?: throw IllegalStateException("No such statistic type")
-}
-
-@Composable
-private fun IconWithText(
-    iconResId: Int,
-    text: String,
-    onItemClickListener: () -> Unit
-)
-{
-    Row(
-        modifier = Modifier.clickable {
-                onItemClickListener()
-        },
-        verticalAlignment = Alignment.CenterVertically
-    )
-    {
-        Icon(
-            painter = painterResource(id = iconResId),
-            contentDescription = null,
-            tint = MaterialTheme.colorScheme.onSecondary)
-        Spacer(modifier = Modifier.width(4.dp))
-        Text(
-            text = text,
-            color = MaterialTheme.colorScheme.onSecondary
-            )
-    }
-}
 
 @Composable
 private fun ChatHeader(chat: Chat)
@@ -161,14 +88,11 @@ private fun ChatHeader(chat: Chat)
                 color = MaterialTheme.colorScheme.onPrimary
             )
             Spacer(modifier = Modifier.height(4.dp))
-            Text(
-                text = chat.publicationDate,
-                color = MaterialTheme.colorScheme.onSecondary
-            )
         }
-        Icon(
-            imageVector = Icons.Rounded.MoreVert,
-            contentDescription = null,
-            tint = MaterialTheme.colorScheme.onSecondary)
+        Text(
+            text = chat.publicationDate,
+            color = MaterialTheme.colorScheme.onSecondary
+        )
+
     }
 }

@@ -8,8 +8,8 @@ private val context = App.instance.appContext
 data class ChatMessage(
     val id: Int,
     val isMyMessage: Boolean = true,
-    val reporterName: String =   context.getString(R.string.reporter_name),
+    val reporterName: String = context.getString(R.string.reporter_name),
     val authorAvatarId: Int = R.drawable.repoter_avatar,
-    val messageText: String = "Message text",
-    val publicationDate: String = "14:00"
+    val messageText: String = context.getString(R.string.message_example),
+    val publicationDate: String = context.getString(R.string.time_example),
 )

@@ -12,7 +12,7 @@ import retrofit2.http.POST
 
 // запрос на отправку кода подтверждения номера телефона
 interface CheckAuthCodeApi {
-    @POST("api/v1/users/send-auth-code/")
+    @POST("api/v1/users/check-auth-code/")
     fun checkAuthCode(
         // в теле запрса - номер телефона и код подтверждения
         @Body sendAuthCodeRequest: CheckAuthCodeRequestDto

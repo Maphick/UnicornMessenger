@@ -1,15 +1,15 @@
 <resources>
-    <string name="app_name">UnicornMessenger</string>
+    <string name="app_name">Unicorn Messenger</string>
     <string name="send_code">Запросить код</string>
     <string name="confirm_code">Подтвердить код</string>
     <string name="confirm_code_error">Неверный код подтверждения</string>
     <string name="no_account_register">Все еще нет аккаунта? Зарегистрируйтесь</string>
     <string name="enter_name">Имя</string>
     <string name="enter_username">Ник</string>
-    <string name="register">Зарегистрироваться</string>
+    <string name="register">Регистрция</string>
     <string name="already_have_an_account">Уже есть аккаунт? Войти</string>
     <string name="enter_phone">Введите номер</string>
-    <string name="enter_code">Введите код подтверждения</string>
+    <string name="enter_code">Введите код</string>
     <string name="get_code">Получить код</string>
     <string name="successed_register">Пользователь успешно зарегистрирован</string>
     <string name="error_register">Не удалось зарегистрироваться</string>
@@ -30,4 +30,5 @@
     <string name="reporter_name">Иван Иванов </string>
     <string name="message_example">Съешь же ещё этих мягких французских булок, да выпей чаю.</string>
     <string name="navigation_item_favourite">Избранное</string>
+    <string name="time_example">14 : 00</string>
 </resources>

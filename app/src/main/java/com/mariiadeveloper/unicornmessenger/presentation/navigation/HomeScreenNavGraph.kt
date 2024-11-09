@@ -11,15 +11,17 @@ fun NavGraphBuilder.HomeScreenNavGraph(
     commentsScreenContent: @Composable () -> Unit
 ) {
     navigation(
-        startDestination = Screens.NewsFeed.route,
+        startDestination = Screens.Chats.route,
         route = Screens.Home.route
     )
     {
-        composable(Screens.NewsFeed.route)
+        // экран со свсеми чатами
+        composable(Screens.Chats.route)
         {
             newsFeedScreenContent()
         }
-        composable(Screens.Comments.route)
+        // экранс конкретным чатом
+        composable(Screens.Messages.route)
         {
             commentsScreenContent()
         }
