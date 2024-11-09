@@ -2,8 +2,12 @@ package com.mariiadeveloper.unicornmessenger.app
 
 import android.app.Application
 import android.content.Context
+import androidx.room.Room
+import com.makashovadev.filmsearcher.data.DAO.UserDao
 import com.makashovadev.filmsearcher.data.Entity.ApiConstants
 import com.makashovadev.filmsearcher.data.Entity.MainRepository
+import com.mariiadeveloper.unicornmessenger.data.Entity.User
+import com.mariiadeveloper.unicornmessenger.data.db.UserRoomDatabase
 import com.mariiadeveloper.unicornmessenger.data.settings.PreferenceProvider
 import com.mariiadeveloper.unicornmessenger.domain.Interactor
 import dagger.hilt.android.HiltAndroidApp
@@ -25,6 +29,8 @@ class App: Application() {
     lateinit var appContext:Context
     // для хранения ключей и времени последнего обновления
     lateinit var preferences: PreferenceProvider
+    lateinit var userDatabase: UserRoomDatabase
+
 
     //= PreferenceProvider
 
@@ -33,11 +39,26 @@ class App: Application() {
         //Инициализируем экземпляр App, через который будем получать доступ к остальным переменным
         instance = this
         //Инициализируем репозиторий
-        repo = MainRepository()
-        interactor = Interactor(repo)
+        /*repo = MainRepository(
+            userDao = userDao
+        )*/
+        interactor = Interactor()
         appContext = applicationContext
         preferences =  PreferenceProvider(appContext)
-        println(preferences.getAccessToken())
+        userDatabase = makeUserDatabase(context = appContext)
+        //var newUSER = User()
+     //   userDatabase.UserDao().addUser(
+          //  newUSER
+       // )
+    }
+
+
+    fun makeUserDatabase(context: Context): UserRoomDatabase {
+        return Room.databaseBuilder(
+            context,
+            UserRoomDatabase::class.java,
+            "userDatabase.db"
+        ).build()
     }
 
 
