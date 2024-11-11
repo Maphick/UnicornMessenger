@@ -1,7 +1,7 @@
 <h1><b>UNICORN MESSANGER</b></h1>
 
 
-<b>FilmSearcher<b> - прототип чата
+<b>UNICORN MESSANGER<b> - прототип чата
 
 <h3>Добро пожаловать!</h3>
 
